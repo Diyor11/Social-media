@@ -9,10 +9,17 @@ import { InfoCard, Container } from './profile.elements'
 import Post from '../../components/post/Post'
 import { LocationOn, PriorityHigh, Favorite, AlternateEmail } from '@mui/icons-material'
 import Photos from '../../components/photos/Photos'
+import { useSelector } from 'react-redux'
 
 const Profile = () => {
 
     const [navOpen, setNavOpen] = useState(false)
+    const posts = useSelector(({posts, user}) => posts.posts.filter(({userId}) => userId === user.user._id))
+
+    const dropdownItems = [
+        {name: 'Delete', fn: () => {}},
+        {name: 'Embed', fn: () => {}},
+    ]
 
     return (
         <Layout>
@@ -51,10 +58,9 @@ const Profile = () => {
                                                 <h6>diyorjsdev@gmail.com</h6>
                                             </span>
                                         </InfoCard>
-                                        <Post my />
-                                        <Post />
-                                        <Post />
-                                        <Post />
+                                        {
+                                            posts.map(({_id, userId, createdAt, desc, img, likes}, index) => <Post img={img} likes={likes} desc={desc} createdAt={createdAt} userId={userId} _id={_id} dropdownItems={dropdownItems}  key={index}/>)
+                                        }
                                     </Container>
                                 </Grid>
                                 <Grid item md={5} sm={12}>

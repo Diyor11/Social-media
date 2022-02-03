@@ -4,22 +4,20 @@ import { Avatar, Typography, IconButton, ClickAwayListener } from '@mui/material
 import { MoreVert, SentimentSatisfiedAlt, CameraAlt, Send } from '@mui/icons-material'
 import { Dropdown, DropdownItems, DropdownItem } from '../navbar/navbar.elements'
 import { ButtonBase } from '@mui/material'
+import moment from 'moment'
+import { useSelector } from 'react-redux'
+import avatarImg from '../../assets/avatar'
 
-import img from './moutain.jpg'
-
-const Post = ({dropdownItems, _id}) => {
+const Post = ({dropdownItems, _id, img, desc, createdAt}) => {
 
     const [dropdown, setDropdown] = useState(false)
     
     const [commentsShow, setCommentsShow] = useState(false)
     const [comment, setComment] = useState('')
+    const user = useSelector(state => state.user.user)
 
     const closeDropdown = () => setDropdown(false)
-
-    // const postMenuItems = []
-
     const emojes = ['😀', '😄', '😅', '🤣','😂', '🙂', '🥰', '😍', '😘','😜','🤫','🤔','🤐','🤨','😔','🤮','🥺','😡','👿','💔','❤️','💯','🖤','🤍','🤚','🖐','👌','👈','👉','👆','🖕','👇','☝','👍','👊','👏','🤲','💪','🤝','🙅','🙅‍♀️','🐵','🐒','🐖','🐇','🦒','🐢', '🤑', '🤕', '🥶', '🙏', '🙋‍♂️', '🙋‍♀️', '🤦‍♂️']                   
-
     const addEmoje = (emoje) => setComment(p => p + emoje)
 
     const handleSubmit = e => {
@@ -29,6 +27,7 @@ const Post = ({dropdownItems, _id}) => {
         setComment('')
     }
 
+
     return (
         <PostCom>
             <div className="top">
@@ -36,7 +35,7 @@ const Post = ({dropdownItems, _id}) => {
                     <Avatar src='/images/3.jpg' alt='Name' />
                     <div className='name'>
                         <Typography variant='h5'>Lana Rhoades</Typography>
-                        <h6>5 minutes ago</h6>
+                        <h6>{moment().to(createdAt)}</h6>
                     </div>
                 </div>
                 <ClickAwayListener onClickAway={() => setDropdown(false)}>
@@ -47,7 +46,7 @@ const Post = ({dropdownItems, _id}) => {
                         <Dropdown dropdown={dropdown} w='120px'>
                             <DropdownItems>
                                 {
-                                    dropdownItems.map(({name, fn}, index) => (
+                                    dropdownItems?.length && dropdownItems.map(({name, fn}, index) => (
                                         <ButtonBase key={index} sx={{width: '100%', borderRadius: '5px'}} onClick={closeDropdown}>
                                             <DropdownItem onClick={() => fn(_id)}>
                                                 <h6>{name}</h6>
@@ -66,7 +65,7 @@ const Post = ({dropdownItems, _id}) => {
                 </ClickAwayListener>
             </div>
             <div className="media">
-                <h4 className="title">Love averybody never be sad and hate</h4>
+                <h4 className="title">{desc}</h4>
                 <img src={img} alt="saome" />
             </div>
             <div className="bottom">
@@ -89,7 +88,7 @@ const Post = ({dropdownItems, _id}) => {
                     <Typography variant='h6'>9 <span>Comment</span></Typography>
                 </div>
             </div>
-            <CommnetArea display={commentsShow}>
+            <CommnetArea d={commentsShow ?'block':'none'}>
 
                 <CommentRow>
                     <Avatar src='/images/4.jpg' />
@@ -99,7 +98,7 @@ const Post = ({dropdownItems, _id}) => {
                     </p>
                 </CommentRow>
                 <CommentRow>
-                    <Avatar src='/images/1.jpg' />
+                    <Avatar src='/images/4.jpg' />
                     <p>
                         <b>Sardor Rahimxon</b>
                         Lorem, ipsum dolor sit amet consectetur adipisicing elit. Non accusantium repudiandae molestiae nam, sunt autem numquam qui sint obcaecati ex facilis earum dicta ipsum neque soluta, officiis aspernatur iusto molestias!
@@ -113,7 +112,7 @@ const Post = ({dropdownItems, _id}) => {
                     </p>
                 </CommentRow>
                 <WriteComment>
-                    <Avatar src='/images/3.jpg' alt='Jhon' />
+                    <Avatar src={user.img || avatarImg} alt='Jhon' />
                     <form onSubmit={handleSubmit}>
                         <input type="text" value={comment} onChange={e => setComment(e.target.value)} />
                         <div className="icons">

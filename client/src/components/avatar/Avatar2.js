@@ -1,6 +1,6 @@
 import React from 'react'
 import { Media, Info, useStyles } from './Avatar'
-import avatarImg from '../../assets/1.jpg'
+import avatarImg from '../../assets/avatar'
 import { Stack, Button } from '@mui/material'
 
 const Avatar = () => {

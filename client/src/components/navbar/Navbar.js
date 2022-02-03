@@ -5,6 +5,7 @@ import { useStyles, Form, Dropdown, DropdownItems, DropdownItem, IconBtn } from 
 import { Search, Notifications, Message, Person, AccountCircle, BookmarkBorder, Settings, Help, Logout, Menu } from '@mui/icons-material'
 import {logOut} from '../../features/slices/userSlice'
 import {useDispatch, useSelector} from 'react-redux'
+import avatarImg from '../../assets/avatar'
 
 const Navbar = ({setNavOpen}) => {
 
@@ -19,7 +20,7 @@ const Navbar = ({setNavOpen}) => {
             <AppBar sx={{background: '#4D86F5'}}>
                 <Toolbar className={classes.toolbar}>
                     <Typography variant='h3' className={classes.brand}>
-                        <IconButton onClick={() => setNavOpen(p => !p)} sx={{color: '#fff', display: {xs: 'inline-block', sm: 'none', md: 'none', lg: 'none'}}} ><Menu /></IconButton>
+                        <IconButton onClick={() => setNavOpen(p => !p)} sx={{color: '#fff', display: {xs: 'inline-flex', sm: 'none', md: 'none', lg: 'none'}}} ><Menu /></IconButton>
                         <NavLink to='/'>
                             Messanger
                         </NavLink>
@@ -59,7 +60,7 @@ const Navbar = ({setNavOpen}) => {
                         </IconBtn>
                         <ClickAwayListener onClickAway={() => setAvatarDropdown(false)}>
                             <div className={classes.notificateBtn}>
-                                <Avatar src={user.picture} alt='saoem' className={classes.avatar} onClick={() => setAvatarDropdown(p => !p)} />
+                                <Avatar src={user.img || avatarImg} alt='saoem' className={classes.avatar} onClick={() => setAvatarDropdown(p => !p)} />
                                 <Dropdown dropdown={avatarDropdown} w='150px'>
                                     <DropdownItems>
                                         <NavLink to='/profile'>

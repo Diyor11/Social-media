@@ -4,7 +4,7 @@ const app = express()
 require('dotenv').config()
 require('./db')()
 
-app.use(express.json())
+app.use(express.json({limit: '30mb', extended: true}))
 // app.use(require('helmet')())
 app.use(require('cors')())
 app.use(require('morgan')('common'))

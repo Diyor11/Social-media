@@ -114,7 +114,7 @@ export const CommetnIcon = styled(Message)`
 `
 
 export const CommnetArea = styled.div` 
-    display: ${({display}) => display ? 'block':'none'};
+    display: ${({d}) => d};
     padding: 10px 0;
     &::before{
         width: 100%;

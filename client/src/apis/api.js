@@ -1,14 +1,14 @@
 import axios from 'axios'
 
 const api = axios.create({
-    baseURL: "http://localhost:8080/api"
+    baseURL: "http://localhost:5000/api"
 }) 
 
 
 const headers = {Authorization: `Bearer ${JSON.parse(localStorage.getItem('profile-data'))?.token}`}
 
 export const signUp = async (user) => {
-    const {data} = await api.post('/auth/signup', user).catch(e => console.log('Error'))
+    const {data} = await api.post('/auth/signup', user).catch(e => console.log('Error sign up'))
     return data
 }
 

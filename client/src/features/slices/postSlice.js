@@ -3,19 +3,20 @@ import { getAllPosts } from '../../apis/api'
 
 export const fetchAllPosts = createAsyncThunk('postSlice/fetchAllPosts', async(id) => {
     const data = await getAllPosts(id)
-    console.log(data)
     return data
 })
 
 const postSlice = createSlice({
-    name: 'posts',
+    name: 'ass',
     initialState: {posts: []},
     reducers: {
-        addPost: ({posts}, {payload}) => {
-            posts = payload 
+        addPost: (state, {payload}) => {
+            state.posts.unshift(payload)
+            return state
         }, 
-        hidePost: ({posts}, {payload}) => {
-            posts = posts.filter(post => post._id !== payload)
+        hidePost: (state, {payload}) => {
+            state.posts = state.posts.filter(post => post._id !== payload)
+            return state
         }
     },
     extraReducers: {

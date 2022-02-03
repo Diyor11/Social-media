@@ -6,13 +6,14 @@ import { RemoveRedEye, VisibilityOff } from '@mui/icons-material';
 import {ButtonBase} from '@mui/material'
 import { signUp } from '../../apis/api'
 import { useNavigate } from 'react-router-dom'
+import Loader from '../../components/loader/Loader'
 
 const SignUp = () => {
 
     const [inputErr, setInputErr] = useState({username: false, email: false, password: false, confirmPassword: false, city: false, country: false})
     const [showPassword, setShowPassword] = useState(false)
     const [errorMsg, setErrMsg] = useState('')
-    // const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const usernameRef = useRef(null)
     const emailRef = useRef(null)
@@ -24,7 +25,9 @@ const SignUp = () => {
     const navigate = useNavigate()
 
     const fetchData = async(userData) => {
+        setLoading(true)
         const data = await signUp(userData)
+        setLoading(false)
 
         if(!navigator.onLine){
             alert('You offline please check network connect')
@@ -104,7 +107,7 @@ const SignUp = () => {
                     {errorMsg}
                 </ErrMessage>
                 <ButtonBase>
-                    <button className='login'>Sign up</button>
+                    <button className='login'>{loading ? <Loader /> : 'Sign up'}</button>
                 </ButtonBase>
                 <ButtonBase>
                     <button className='google-btn'>
