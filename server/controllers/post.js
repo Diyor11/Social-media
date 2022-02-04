@@ -34,6 +34,7 @@ module.exports.updatePost = async(req, res) => {
 module.exports.deletePost = async(req, res) => {
 
     const post = await Post.findById(req.params.id)
+    console.log(post)
     if(!post) return res.send({error: 'This post not found'})
     if(post.userId === req.userId){
         const deletedPost = await post.deleteOne()
