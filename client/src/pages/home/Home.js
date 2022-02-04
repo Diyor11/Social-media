@@ -16,6 +16,7 @@ const Home = () => {
 
     useEffect(() => {
         dispatch(fetchAllPosts(user._id))
+        console.log(11111)
     }, [user, dispatch])
 
     return (

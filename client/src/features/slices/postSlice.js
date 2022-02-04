@@ -7,7 +7,6 @@ export const fetchAllPosts = createAsyncThunk('postSlice/fetchAllPosts', async(i
 })
 
 export const fetchMyPosts = createAsyncThunk('postSlice/fetchMyPosts', async(id) => {
-    console.log('ishladi')
     const data = await getPostsById(id)
     return data
 })

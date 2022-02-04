@@ -9,5 +9,6 @@ router.get('/:id', [validId], getUser)
 router.get('/', getAllUsers)
 router.patch('/follow/:id', [validId, authConfirm], followUser)
 router.patch('/unfollow/:id', [validId, authConfirm], unfollowUser)
+router.patch('/', [authConfirm])
 
 module.exports = router

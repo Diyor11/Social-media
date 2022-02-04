@@ -114,7 +114,7 @@ const CreatePost = () => {
     return(
         <Post>
             <div className='top'>
-                <Avatar src={user.img || avatarImg} alt='joht doe' />
+                <Avatar src={user.picture || avatarImg} alt='joht doe' />
                 <input type="text" placeholder={`${user.username} whats your mine today`} ref={title} />
             </div>
             <Divider sx={{my: '15px'}} />

@@ -4,6 +4,10 @@ import img from '../../assets/ad.png'
 import avatarImg from '../../assets/avatar'
 import { Stack, Button } from '@mui/material'
 import {makeStyles} from '@mui/styles'
+import CameraAltIcon from '@mui/icons-material/CameraAlt'
+import { updateImage } from '../../features/slices/userSlice'
+import {useDispatch, useSelector} from 'react-redux'
+import { updateUser } from '../../apis/api'
 
 export const Media = styled.div`
     width: 100%;
@@ -14,18 +18,6 @@ export const Media = styled.div`
 
     @media(max-width: 600px){
         height: 350px;
-    }
-
-    img{
-        width: 250px;
-        height: 250px;
-        border-radius: 50%;
-        border: 4.5px solid #fff;
-        position: absolute;
-        bottom: -125px;
-        left: 0;
-        right: 0;
-        margin: 0 auto;
     }
 `
 
@@ -45,6 +37,33 @@ export const Info = styled.div`
     }
 `
 
+const AvatarWrap = styled.div`
+    width: 250px;
+    height: 250px;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 4.5px solid #fff;
+    position: absolute;
+    bottom: -125px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    label{
+        position: relative;
+        img{
+            width: 100%;        
+            cursor: cell;
+        }
+        svg{
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            font-size: 37px;
+            color: #fff;
+        }
+    }    
+`
+
 export const useStyles = makeStyles({
     btn: {
         background: '#444',
@@ -61,11 +80,32 @@ export const useStyles = makeStyles({
 const Avatar = () => {
 
     const classes = useStyles()
+    const dispatch = useDispatch()
+    const user = useSelector(state => state.user.user)
+
+    const saveImg = async(info) => {
+        const data = await updateUser(info, user._id)
+        if(data){
+            dispatch(updateImage(data.profilePicture))
+        }
+    }
+
+    const imageChange = ({target: {files}}) => {
+        let reader = new FileReader()
+        reader.readAsDataURL(files[0])
+        reader.onload = () => saveImg({profilePicture: reader.result})
+    }
 
     return (
         <>
         <Media>
-            <img alt='' src={avatarImg} />
+            <AvatarWrap>
+                <label htmlFor='choose-file'>
+                    <img alt='' src={user.picture || avatarImg} />
+                    <input type='file' id='choose-file' hidden onChange={imageChange} />
+                    <CameraAltIcon />
+                </label>
+            </AvatarWrap>
         </Media>
         <Info>
             <h2>Emma Watson</h2>

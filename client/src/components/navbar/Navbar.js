@@ -60,7 +60,7 @@ const Navbar = ({setNavOpen}) => {
                         </IconBtn>
                         <ClickAwayListener onClickAway={() => setAvatarDropdown(false)}>
                             <div className={classes.notificateBtn}>
-                                <Avatar src={user.img || avatarImg} alt='saoem' className={classes.avatar} onClick={() => setAvatarDropdown(p => !p)} />
+                                <Avatar src={user.picture || avatarImg} alt='saoem' className={classes.avatar} onClick={() => setAvatarDropdown(p => !p)} />
                                 <Dropdown dropdown={avatarDropdown} w='150px'>
                                     <DropdownItems>
                                         <NavLink to='/profile'>

@@ -74,7 +74,7 @@ const userUpdateValidater = Joi.object({
     city: Joi.string().max(50),
     from: Joi.string().max(50),
     relationShip: Joi.string(),
-    userId: Joi.string().required()
+    profilePicture: Joi.string().min(200)
 })
 
 module.exports = {User, userSignUpValidater, userSignInValidater, userUpdateValidater}

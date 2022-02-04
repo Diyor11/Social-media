@@ -8,12 +8,11 @@ module.exports.updateUser = async(req, res) => {
     const {error, value} = userUpdateValidater.validate(req.body)
     
     if(error) return res.send({error: error.details[0].message})
-    if(!['single', 'married'].includes(value.relationShip.toLowerCase())) return res.status(400).send({error: 'Relitionship must be single or married'})
-    if(!validUserId(value.userId)) return res.send({error: 'userId is not valid'})
+    if(value.relationShip && !['single', 'married'].includes(value.relationShip.toLowerCase())) return res.status(400).send({error: 'Relitionship must be single or married'})
     const currentUser = await User.findById(req.params.id)
     if(!currentUser) return res.send({error: 'User not found'})
         
-    if(currentUser.isAdmin || req.params.id === value.userId){
+    if(currentUser.isAdmin || req.params.id === req.userId){
         if(value.password)
             value.password = await bcrypt.hash(value.password, 10)
         const updatedUser = await currentUser.set(value).save()
