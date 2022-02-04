@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import img from '../../assets/ad.png'
-import avatarImg from '../../assets/1.jpg'
+import avatarImg from '../../assets/avatar'
 import { Stack, Button } from '@mui/material'
 import {makeStyles} from '@mui/styles'
 
@@ -72,8 +72,8 @@ const Avatar = () => {
             <h5>HI there i'm new</h5>
         </Info>
         <Stack className={classes.stack} direction='row' spacing={1}>
-            <Button startIcon={<i class="fab fa-facebook-messenger"></i>} variant='contained'>Message</Button>
-            <Button className={classes.btn} startIcon={<i class="fas fa-pen"></i>} variant='contained'>Edit Profile</Button>
+            <Button startIcon={<i className="fab fa-facebook-messenger"></i>} variant='contained'>Message</Button>
+            <Button className={classes.btn} startIcon={<i className="fas fa-pen"></i>} variant='contained'>Edit Profile</Button>
         </Stack>
         </>
     )

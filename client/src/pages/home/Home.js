@@ -23,7 +23,7 @@ const Home = () => {
             <Backdrop open={navOpen}  sx={{ zIndex: 1400 }} />
             <Navbar setNavOpen={setNavOpen}/>
             <LayoutMain>
-                <Grid sx={{background: 'coral'}} container>
+                <Grid sx={{background: '#fff'}} container>
                     <Grid item md={3} sm={4}>
                         <Box height='100%' bgcolor='#fff' >
                             <Sidebar setNavOpen={setNavOpen} navOpen={navOpen} />

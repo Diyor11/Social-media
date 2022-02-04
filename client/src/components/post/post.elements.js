@@ -28,6 +28,7 @@ export const PostCom = styled.div`
                 h6{
                     font-family: sans-serif;
                     color: #777;
+                    text-transform: capitalize;
                 }
             }
         }
@@ -114,7 +115,7 @@ export const CommetnIcon = styled(Message)`
 `
 
 export const CommnetArea = styled.div` 
-    display: ${({display}) => display ? 'block':'none'};
+    display: ${({d}) => d};
     padding: 10px 0;
     &::before{
         width: 100%;

@@ -1,6 +1,0 @@
-const mongoose = require('mongoose')
-
-module.exports = (req, res, next) => {
-    if(!mongoose.Types.ObjectId.isValid(req.body.userId)) return res.status(400).send({error: 'Invalid id'})
-    next()
-}

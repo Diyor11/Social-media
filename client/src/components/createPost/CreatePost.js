@@ -5,6 +5,7 @@ import { InsertPhoto, LocalOffer, LocationOn, EmojiEmotions, Close } from '@mui/
 import { useDispatch, useSelector } from 'react-redux'
 import { createPost } from '../../apis/api'
 import {addPost} from '../../features/slices/postSlice'
+import avatarImg from '../../assets/avatar'
 
 const Post = styled.div`
     padding: 15px;
@@ -102,14 +103,18 @@ const CreatePost = () => {
             return alert("Description and Image required")
         const post = {img, desc, userId: user._id}
         const data = await createPost(post)  
-        if(data)
+        title.current.value=''
+        setImg('')
+        if(data){
             dispatch(addPost(data))
+            window.scrollTo({top: 150, left: 0, behavior: 'smooth'})
+        }
     }
 
     return(
         <Post>
             <div className='top'>
-                <Avatar src={user.picture} alt='joht doe' />
+                <Avatar src={user.img || avatarImg} alt='joht doe' />
                 <input type="text" placeholder={`${user.username} whats your mine today`} ref={title} />
             </div>
             <Divider sx={{my: '15px'}} />

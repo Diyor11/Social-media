@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { Layout, LayoutMain } from '../../globalStyles'
 import Navbar from '../../components/navbar/Navbar'
 import {Grid, Box, Typography, Backdrop} from '@mui/material'
@@ -9,17 +9,38 @@ import { InfoCard, Container } from './profile.elements'
 import Post from '../../components/post/Post'
 import { LocationOn, PriorityHigh, Favorite, AlternateEmail } from '@mui/icons-material'
 import Photos from '../../components/photos/Photos'
+import { useSelector, useDispatch } from 'react-redux'
+import { deletePost } from '../../apis/api'
+import { deletePost as removePost, fetchMyPosts } from '../../features/slices/postSlice'
 
 const Profile = () => {
 
     const [navOpen, setNavOpen] = useState(false)
+    const {user: {user}, posts: {myposts}} = useSelector((state) => state)
+    const dispatch = useDispatch()
+    
+    const deletePostFn = async(_id) => {
+        const data = await deletePost(_id, user._id)
+        if(data){
+            dispatch(removePost(_id))
+        }
+    }
+
+    const dropdownItems = [
+        {name: 'Delete', fn: deletePostFn},
+        {name: 'Embed', fn: () => {}},
+    ]
+
+    useEffect(() => {
+        dispatch(fetchMyPosts(user._id))
+    }, [user, dispatch])
 
     return (
         <Layout>
             <Backdrop open={navOpen}  sx={{ zIndex: 1400 }} />
             <Navbar setNavOpen={setNavOpen}/>
             <LayoutMain>
-                <Grid sx={{background: 'coral', }} container>
+                <Grid container>
                     <Grid item md={3} sm={4}>
                         <Box height='100%' bgcolor='#fff' >
                             <Sidebar setNavOpen={setNavOpen} navOpen={navOpen} />
@@ -51,10 +72,9 @@ const Profile = () => {
                                                 <h6>diyorjsdev@gmail.com</h6>
                                             </span>
                                         </InfoCard>
-                                        <Post my />
-                                        <Post />
-                                        <Post />
-                                        <Post />
+                                        {
+                                            myposts.map(({_id, userId, createdAt, desc, img, likes}, index) => <Post img={img} likes={likes} desc={desc} createdAt={createdAt} userId={userId} _id={_id} dropdownItems={dropdownItems}  key={index}/>)
+                                        }
                                     </Container>
                                 </Grid>
                                 <Grid item md={5} sm={12}>
