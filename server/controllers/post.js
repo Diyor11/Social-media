@@ -35,8 +35,8 @@ module.exports.deletePost = async(req, res) => {
 
     const post = await Post.findById(req.params.id)
     if(!post) return res.send({error: 'This post not found'})
-    if(post.userId === req.body.userId){
-        await post.deleteOne()
+    if(post.userId === req.userId){
+        const deletedPost = await post.deleteOne()
         res.send(deletedPost)
     } else {
         res.send({error: 'You can delete only your own posts'})
@@ -48,11 +48,11 @@ module.exports.likePost = async(req, res) => {
     const post = await Post.findById(req.params.id)
     if(!post) return res.send({error: 'This post not found'})
 
-    if(post.likes.includes(req.body.userId)){
-        await post.updateOne({$pull: {likes: req.body.userId}})
+    if(post.likes.includes(req.userId)){
+        await post.updateOne({$pull: {likes: req.userId}})
         res.send({success: 'Post success distliked'})
     } else {
-        await post.updateOne({$push: {likes: req.body.userId}})
+        await post.updateOne({$push: {likes: req.userId}})
         res.send({success: 'Post success liked'})
     }
 }
@@ -74,6 +74,10 @@ module.exports.getAllPost = async(req, res) => {
     res.send(userPosts.concat(friendPosts))
 }
 // --------------------------------- get my posts ---------------------------------
-module.exports.getMyPosts = async(req, res) => {
+module.exports.getUserPosts = async(req, res) => {
+    const currentUser = await User.findById(req.params.id)
+    if(!currentUser) return res.send({error: 'User not found'})
 
+    const userPosts = await Post.find({userId: currentUser._id}).sort({createdAt: 1}).select({__v: 0})
+    res.send(userPosts)
 }

@@ -105,8 +105,10 @@ const CreatePost = () => {
         const data = await createPost(post)  
         title.current.value=''
         setImg('')
-        if(data)
+        if(data){
             dispatch(addPost(data))
+            window.scrollTo({top: 150, left: 0, behavior: 'smooth'})
+        }
     }
 
     return(

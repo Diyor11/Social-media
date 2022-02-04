@@ -5,7 +5,7 @@ const api = axios.create({
 }) 
 
 
-const headers = {Authorization: `Bearer ${JSON.parse(localStorage.getItem('profile-data'))?.token}`}
+const headers = {authorization: `Bearer ${JSON.parse(localStorage.getItem('profile-data'))?.token}`}
 
 export const signUp = async (user) => {
     const {data} = await api.post('/auth/signup', user).catch(e => console.log('Error sign up'))
@@ -46,3 +46,9 @@ export const getAllPosts = async (userId) => {
     const {data} = await api.get(`posts/allposts/${userId}`).catch(e => console.log('Error'))
     return data
 }
+
+export const getPostsById = async (userId) => {
+    const {data} = await api.get(`posts/userposts/${userId}`).catch(e => console.log('Error'))
+    return data
+}
+

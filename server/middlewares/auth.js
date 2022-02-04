@@ -20,6 +20,7 @@ module.exports = async (req, res, next) => {
     }
 
     req.userId = decodeData?._id
+    console.log(req.userId)
 
     if(!mongoose.Types.ObjectId.isValid(req.userId))
         return res.status(400).send({error: 'invalid token'})

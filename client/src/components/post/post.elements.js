@@ -28,6 +28,7 @@ export const PostCom = styled.div`
                 h6{
                     font-family: sans-serif;
                     color: #777;
+                    text-transform: capitalize;
                 }
             }
         }

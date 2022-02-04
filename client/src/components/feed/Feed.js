@@ -17,9 +17,6 @@ const Feed = () => {
         {name: 'Hide', fn: (_id) => dispatch(hidePost(_id))}
     ]
 
-
-    console.log(posts)
-
     return (
         <FeedCom>
             <CreatePost />
