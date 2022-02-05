@@ -24,14 +24,14 @@ const SignIn = () => {
     const dispatch = useDispatch()
 
     const fatchData = async(userData) => {
+        if(!navigator.onLine)
+            return alert('You offline please check network connect')
+
         setLoading(true)
         const data = await signIn(userData)
         setLoading(false)
-
-        if(!navigator.onLine){
-            alert('You offline please check network connect')
-        }
-        else if(data.error){
+    
+        if(data && data.error){
             setErrMsg(data.error)
         } else {
             dispatch(logIn(data))

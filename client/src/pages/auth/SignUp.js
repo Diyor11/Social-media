@@ -25,14 +25,14 @@ const SignUp = () => {
     const navigate = useNavigate()
 
     const fetchData = async(userData) => {
+        if(!navigator.onLine)
+             return alert('You offline please check network connect')
+
         setLoading(true)
         const data = await signUp(userData)
         setLoading(false)
-
-        if(!navigator.onLine){
-            alert('You offline please check network connect')
-        }
-        else if(!data){
+        
+        if(!data){
             console.log('data error ' + data)
         }
         else if(data.error){

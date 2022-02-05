@@ -6,6 +6,12 @@ const Post = mongoose.model('Posts', mongoose.Schema({
         type: String,
         require: true
     },
+    createrImg: {
+        type: String
+    },
+    createrName: {
+        type: String
+    },
     desc: {
         type: String,
         max: 500
@@ -22,7 +28,9 @@ const Post = mongoose.model('Posts', mongoose.Schema({
 const postValidater = Joi.object({
     userId: Joi.string(),
     desc: Joi.string().max(500),
-    img: Joi.string()
+    img: Joi.string(),
+    createrImg: Joi.string().min(100),
+    createrName: Joi.string().min(3).max(50)
 })
 
 module.exports = { Post, postValidater }

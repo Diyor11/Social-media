@@ -21,7 +21,7 @@ const Feed = () => {
         <FeedCom>
             <CreatePost />
             {
-                posts.map(({_id, userId, createdAt, desc, img, likes}, index) => <Post img={img} likes={likes} desc={desc} createdAt={createdAt} userId={userId} _id={_id} dropdownItems={dropdownItems}  key={index}/>)
+                posts.map(({_id, userId, createdAt, desc, img, likes, createrName, createrImg}, index) => <Post createrImg={createrImg} createrName={createrName} img={img} likes={likes} desc={desc} createdAt={createdAt} userId={userId} _id={_id} dropdownItems={dropdownItems}  key={index}/>)
             }
         </FeedCom>
     )

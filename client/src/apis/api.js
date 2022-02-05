@@ -57,3 +57,7 @@ export const updateUser = async(info, _id) => {
     return data
 }
 
+export const getAvatar = async () => {
+    const {data} = await api.get('users/image/avatar')
+    return data
+}

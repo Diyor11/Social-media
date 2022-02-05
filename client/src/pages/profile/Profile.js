@@ -12,6 +12,7 @@ import Photos from '../../components/photos/Photos'
 import { useSelector, useDispatch } from 'react-redux'
 import { deletePost } from '../../apis/api'
 import { deletePost as removePost, fetchMyPosts } from '../../features/slices/postSlice'
+import { fetchAvatar } from '../../features/slices/userSlice'
 
 const Profile = () => {
 
@@ -32,7 +33,10 @@ const Profile = () => {
     ]
 
     useEffect(() => {
-        dispatch(fetchMyPosts(user._id))
+        if(user){
+            dispatch(fetchMyPosts(user._id))
+            fetchAvatar()
+        }
     }, [user, dispatch])
 
     return (
@@ -73,7 +77,7 @@ const Profile = () => {
                                             </span>
                                         </InfoCard>
                                         {
-                                            myposts.map(({_id, userId, createdAt, desc, img, likes}, index) => <Post img={img} likes={likes} desc={desc} createdAt={createdAt} userId={userId} _id={_id} dropdownItems={dropdownItems}  key={index}/>)
+                                            myposts.map(({_id, userId, createdAt, desc, img, likes, createrName, createrImg}, index) => <Post createrName={createrName} createrImg={createrImg} img={img} likes={likes} desc={desc} createdAt={createdAt} userId={userId} _id={_id} dropdownItems={dropdownItems}  key={index}/>)
                                         }
                                     </Container>
                                 </Grid>

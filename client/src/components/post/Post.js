@@ -8,7 +8,7 @@ import moment from 'moment'
 import { useSelector } from 'react-redux'
 import avatarImg from '../../assets/avatar'
 
-const Post = ({dropdownItems, _id, img, desc, createdAt}) => {
+const Post = ({dropdownItems, _id, img, desc, createdAt, createrName, createrImg}) => {
 
     const [dropdown, setDropdown] = useState(false)
     
@@ -32,9 +32,9 @@ const Post = ({dropdownItems, _id, img, desc, createdAt}) => {
         <PostCom>
             <div className="top">
                 <div className='info'>
-                    <Avatar src='/images/3.jpg' alt='Name' />
+                    <Avatar src={createrImg} alt='Name' />
                     <div className='name'>
-                        <Typography variant='h5'>Lana Rhoades</Typography>
+                        <Typography variant='h5'>{createrName}</Typography>
                         <h6>{moment().to(createdAt)}</h6>
                     </div>
                 </div>

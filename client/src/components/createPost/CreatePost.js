@@ -101,7 +101,7 @@ const CreatePost = () => {
         const desc = title.current.value
         if(!desc || !img)
             return alert("Description and Image required")
-        const post = {img, desc, userId: user._id}
+        const post = {img, desc, userId: user._id, createrImg: user.picture, createrName: user.username}
         const data = await createPost(post)  
         title.current.value=''
         setImg('')

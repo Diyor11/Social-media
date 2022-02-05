@@ -7,6 +7,7 @@ import Feed from '../../components/feed/Feed'
 import Rightbar from '../../components/rightbar/Rightbar'
 import { useSelector, useDispatch } from 'react-redux'
 import { fetchAllPosts } from '../../features/slices/postSlice'
+import { fetchAvatar } from '../../features/slices/userSlice'
 
 const Home = () => {
 
@@ -15,8 +16,10 @@ const Home = () => {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(fetchAllPosts(user._id))
-        console.log(11111)
+        if(user){
+            dispatch(fetchAllPosts(user._id))
+            dispatch(fetchAvatar())
+        }
     }, [user, dispatch])
 
     return (

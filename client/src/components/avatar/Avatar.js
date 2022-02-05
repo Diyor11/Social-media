@@ -100,9 +100,9 @@ const Avatar = () => {
         <>
         <Media>
             <AvatarWrap>
-                <label htmlFor='choose-file'>
+                <label htmlFor='choose-avtaar'>
                     <img alt='' src={user.picture || avatarImg} />
-                    <input type='file' id='choose-file' hidden onChange={imageChange} />
+                    <input type='file' id='choose-avtaar' hidden onChange={imageChange} />
                     <CameraAltIcon />
                 </label>
             </AvatarWrap>

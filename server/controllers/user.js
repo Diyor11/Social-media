@@ -107,3 +107,8 @@ module.exports.unfollowUser = async(req, res) => {
         return res.send({success: 'This acc already deleted you success unfollow'})
     }
 }
+// --------------- get user avatar image --------->
+module.exports.getAvatar = async(req, res) => {
+    const avatar = await User.findById(req.userId).select({profilePicture: 1})
+    res.send(avatar?.profilePicture)
+}
