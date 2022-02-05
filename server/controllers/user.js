@@ -51,7 +51,7 @@ module.exports.deleteUser = async(req, res) => {
 }
 // --------------- get a user by id ------ ->
 module.exports.getAllUsers = async(req, res) => {
-    const users = await User.find()
+    const users = await User.find().select({profilePicture: 1, username: 1})
     res.send(users)
 }
 // --------------- get a user by id ------ ->

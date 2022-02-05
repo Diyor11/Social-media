@@ -53,11 +53,17 @@ export const getPostsById = async (userId) => {
 }
 
 export const updateUser = async(info, _id) => {
-    const {data} = await api.put('users/' + _id, info)
+    const {data} = await api.put('users/' + _id, info).catch(e => console.log('Error'))
     return data
 }
 
 export const getAvatar = async () => {
-    const {data} = await api.get('users/image/avatar')
+    const {data} = await api.get('users/image/avatar').catch(e => console.log('Error'))
+    return data
+}
+
+export const suggistion = async () => {
+    const {data} = api.get('users').catch(e => console.log('Error'))
+    console.log(data)
     return data
 }

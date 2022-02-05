@@ -1,11 +1,26 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { RightbarCom, useStyles } from './rightbar.elements'
 import { Typography, List, ListItem, ListItemAvatar, Avatar } from '@mui/material'
 import img from '../../assets/ad.png'
+import {suggistion} from '../../apis/api'
 
 const Rightbar = () => {
 
     const classes = useStyles()
+    const [users, setUsers] = useState([])
+    console.log(users)
+
+    const fetchUsers = async() => {
+        const data = await suggistion()
+        console.log(data)
+        if(data){
+            setUsers(data)
+        }
+    }
+
+    useEffect(() => {
+        fetchUsers()
+    },[])
 
     return (
         <RightbarCom>

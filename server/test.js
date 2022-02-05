@@ -11,10 +11,17 @@
 const {Post} = require('./models/Post')
 const {User} = require('./models/User')
 
-;(async() => {
-    const post = await Post.findById('61facbfeb15abe07e87a9f5f')
-    console.log(post)
-})()
+const fetch = async() => {
+    try {
+        const data = await Post.find()
+        const data1 = await User.find()
+        await console.log(data, data1)
+    } catch (error) {
+        console.log('error')
+    }
+}
+
+fetch()
 
 // User.findOne({_id: '61faab94bec4f4ef4f828585'})
 //     .then(res => console.log(res))

@@ -52,7 +52,7 @@ const Profile = () => {
                     </Grid>
                     <Grid item md={9} sm={8} xs={12} px={{md: '16px', sm: '8px', xs: '0'}}>
                         <Box height='100%' bgcolor='#fff'>
-                            <Avatar />
+                            <Avatar name={user.username} />
                             <Grid container>
                                 <Grid item md={7} sm={12}>
                                     <Container>

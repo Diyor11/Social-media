@@ -77,7 +77,7 @@ export const useStyles = makeStyles({
     }
 })
 
-const Avatar = () => {
+const Avatar = ({name}) => {
 
     const classes = useStyles()
     const dispatch = useDispatch()
@@ -108,7 +108,7 @@ const Avatar = () => {
             </AvatarWrap>
         </Media>
         <Info>
-            <h2>Emma Watson</h2>
+            <h2>{name}</h2>
             <h5>HI there i'm new</h5>
         </Info>
         <Stack className={classes.stack} direction='row' spacing={1}>
