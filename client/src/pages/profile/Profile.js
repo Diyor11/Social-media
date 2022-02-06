@@ -13,6 +13,22 @@ import { useSelector, useDispatch } from 'react-redux'
 import { deletePost } from '../../apis/api'
 import { deletePost as removePost, fetchMyPosts } from '../../features/slices/postSlice'
 import { fetchAvatar } from '../../features/slices/userSlice'
+import { NavLink } from 'react-router-dom'
+
+const Photo = ({img}) => (
+    <span>
+        <img alt='' src={img} />
+    </span>
+)
+
+const UserPhoto = ({profilePicture, name, _id}) => (
+    <span>
+        <img alt='' src={profilePicture} />
+        <NavLink to={`/user/${_id}`}>
+            <h6>{name}</h6>
+        </NavLink>
+    </span>
+)
 
 const Profile = () => {
 
@@ -35,9 +51,9 @@ const Profile = () => {
     useEffect(() => {
         if(user){
             dispatch(fetchMyPosts(user._id))
-            fetchAvatar()
+            dispatch((fetchAvatar()))
         }
-    }, [user, dispatch])
+    }, [])
 
     return (
         <Layout>
@@ -61,7 +77,9 @@ const Profile = () => {
                                             <Typography variant='h6'>User Infomation</Typography>
                                             <span>
                                                 <LocationOn />
-                                                <h6>from Tashkent, in Uzbekistan</h6>
+                                                <h6>
+                                                    from <span>{user.city}</span>, in <span>{user.from}</span>
+                                                </h6>
                                             </span>
                                             <span>
                                                 <Favorite />
@@ -73,7 +91,7 @@ const Profile = () => {
                                             </span>
                                             <span>
                                                 <AlternateEmail />
-                                                <h6>diyorjsdev@gmail.com</h6>
+                                                <h6>{user.email}</h6>
                                             </span>
                                         </InfoCard>
                                         {
@@ -83,8 +101,27 @@ const Profile = () => {
                                 </Grid>
                                 <Grid item md={5} sm={12}>
                                     <Container>
-                                        <Photos title='User friends' />
-                                        <Photos title=' User photos' />
+                                        <Photos title='User friends'>
+                                            {
+                                                user.allUsers && user.allUsers.map(({profilePicture, _id, username}) => (
+                                                    <span>
+                                                        <img alt='' src={profilePicture} />
+                                                        <NavLink to={`/user/${_id}`}>
+                                                            <h6>{username}</h6>
+                                                        </NavLink>
+                                                    </span>
+                                                ))
+                                            }
+                                        </Photos>
+                                        <Photos title=' User photos' >
+                                            {
+                                                myposts && myposts.map(({img}) => (
+                                                    <span>
+                                                        <img src={img} alt={''} />
+                                                    </span>
+                                                ))
+                                            }
+                                        </Photos>
                                     </Container>
                                 </Grid>
                             </Grid>

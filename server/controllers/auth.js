@@ -28,7 +28,7 @@ module.exports.signIn = async(req, res) => {
     const validatePassword = await bcrypt.compare(value.password, existEmail.password)
     if(!validatePassword) return res.send({error: 'Invalid password or email'})
 
-    const {email, _id, username} = existEmail._doc
+    const {email, _id, username, from, city} = existEmail._doc
     const token = jwt.sign({email, _id}, process.env.JWT_KEY)
-    res.send({user: {email, _id, username}, token})
+    res.send({user: {email, _id, username, from, city}, token})
 }

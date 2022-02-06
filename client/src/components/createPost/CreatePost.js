@@ -36,6 +36,9 @@ const Post = styled.div`
                 color: #444;
                 margin-left: 8px;
                 font-family: 'Roboto', sans-serif;
+                @media(max-width: 850px){
+                    display: none;
+                }
             }
         }
         button.share{
@@ -51,12 +54,6 @@ const Post = styled.div`
     @media(max-width: 600px){
         border-radius: 0;
         box-shadow: none;
-
-         .bottom{
-             .item{
-                 h6{display: none;}
-             }
-         }
     }
 `
 

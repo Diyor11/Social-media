@@ -19,6 +19,10 @@ export const InfoCard  = styled.div`
             font-size: 16px;
             padding-top: 2px;
             padding-left: 10px;
+            span{
+                text-transform: capitalize;
+                display: inline;
+            }
         }
     }
 `

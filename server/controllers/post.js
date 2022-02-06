@@ -66,11 +66,13 @@ module.exports.getPost = async(req, res) => {
 }
 // --------------------------------- get all posts ---------------------------------
 module.exports.getAllPost = async(req, res) => {
-    const currentUser = await User.findById(req.params.id)
+    const currentUser = await User.findById(req.userId)
     if(!currentUser) return res.send({error: 'User not found'})
 
     const userPosts = await Post.find({userId: currentUser._id}).sort({createdAt: 1}).select({__v: 0})
-    const friendPosts  = await Promise.all(currentUser.followings.map(id => Post.find({userId: id})))
+    const ids = [...currentUser.followings, ...currentUser.followers]
+    console.log(ids)
+    const friendPosts  = await Promise.all(ids.map(id => Post.findOne({userId: id})))
 
     res.send(userPosts.concat(friendPosts))
 }

@@ -37,7 +37,7 @@ export const Info = styled.div`
     }
 `
 
-const AvatarWrap = styled.div`
+export const AvatarWrap = styled.div`
     width: 250px;
     height: 250px;
     overflow: hidden;

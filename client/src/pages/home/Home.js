@@ -17,10 +17,10 @@ const Home = () => {
 
     useEffect(() => {
         if(user){
-            dispatch(fetchAllPosts(user._id))
+            dispatch(fetchAllPosts())
             dispatch(fetchAvatar())
         }
-    }, [user, dispatch])
+    }, [])
 
     return (
         <Layout>

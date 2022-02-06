@@ -1,15 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { getAllPosts, getPostsById } from '../../apis/api'
 
-export const fetchAllPosts = createAsyncThunk('postSlice/fetchAllPosts', async(id) => {
-    const data = await getAllPosts(id)
-    return data
-})
+export const fetchAllPosts = createAsyncThunk('postSlice/fetchAllPosts', getAllPosts)
 
-export const fetchMyPosts = createAsyncThunk('postSlice/fetchMyPosts', async(id) => {
-    const data = await getPostsById(id)
-    return data
-})
+export const fetchMyPosts = createAsyncThunk('postSlice/fetchMyPosts', getPostsById)
 
 const postSlice = createSlice({
     name: 'ass',

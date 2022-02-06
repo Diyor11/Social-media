@@ -1,8 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import img from '../post/moutain.jpg'
-import img1 from '../../assets/1.jpg'
-import img2 from '../../assets/ad.png'
+import {NavLink} from 'react-router-dom'
 
 const Main = styled.div`
     border-radius: 15px;
@@ -46,37 +44,15 @@ const Title = styled.h4`
     margin-bottom: 7px;
 `
 
-const Photos = ({title}) => {
+const Photos = ({title, children}) => {
+
 
     return (
         <Main>
-        <Title>{title}</Title>
-        <Grid>
-            <span>
-                <img alt='' src={img} />
-                <h6>Lana Rhoase</h6>
-            </span>
-            <span>
-                <img alt='' src={img1} />
-                <h6>Mia Malkova</h6>
-            </span>
-            <span>
-                <img alt='' src={img2} />
-                <h6>Ronda Rousey</h6>
-            </span>
-            <span>
-                <img alt='' src={img} />
-                <h6>Amanda Nunes</h6>
-            </span>
-            <span>
-                <img alt='' src={img1} />
-                <h6>Amanda Nunes</h6>
-            </span>
-            <span>
-                <img alt='' src={img2} />
-                <h6>Amanda Nunes</h6>
-            </span>
-        </Grid>
+            <Title>{title}</Title>
+            <Grid>
+                {children}
+            </Grid>
         </Main>
     )
 }

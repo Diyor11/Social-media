@@ -1,7 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { getAvatar } from '../../apis/api'
+import { getAvatar, suggistion } from '../../apis/api'
 
 export const fetchAvatar = createAsyncThunk('postSlice/fetchAvatar', getAvatar)
+
+export const fetchAllUsers = createAsyncThunk('postSlice/fetchAllUsers', suggistion)
 
 const userSlice = createSlice({
     name: 'user',
@@ -18,6 +20,10 @@ const userSlice = createSlice({
         updateImage: (state, {payload}) => {
             state.user.picture = payload
             return state
+        },
+        setAllUsers: (state, {payload}) => {
+            state.user.allUsers = payload
+            return state
         }
     },
     extraReducers: {
@@ -28,9 +34,17 @@ const userSlice = createSlice({
         },
         [fetchAvatar.rejected]: () => {
             console.log('Error get avatar')
+        },
+        
+        [fetchAllUsers.fulfilled]: (state, {payload}) => {
+            state.user.allUsers = payload
+            return state
+        },
+        [fetchAllUsers.rejected]: () => {
+            console.log('Error fetching all users')
         }
     }
 })
 
-export const { logIn, logOut, updateImage } = userSlice.actions
+export const { logIn, logOut, updateImage, setAllUsers } = userSlice.actions
 export default userSlice.reducer

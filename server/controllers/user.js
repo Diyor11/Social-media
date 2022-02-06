@@ -51,15 +51,20 @@ module.exports.deleteUser = async(req, res) => {
 }
 // --------------- get a user by id ------ ->
 module.exports.getAllUsers = async(req, res) => {
-    const users = await User.find().select({profilePicture: 1, username: 1})
+    const users = await User.find({_id: {$ne: req.userId}}).select({profilePicture: 1, username: 1})
     res.send(users)
 }
 // --------------- get a user by id ------ ->
 module.exports.getUser = async(req, res) => {
-    const user = await User.findById(req.params.id)
+    const user = await User.findById(req.params.id).select({username: 1, email: 1, profilePicture: 1, followers: 1, followings: 1, city: 1, from: 1})
     if(!user) return res.send({error: 'this user not found'})
-    const {password, updatedAt, ...filterdUser} = user._doc
-    res.send(filterdUser)
+    const posts = await Post.find({userId: req.params.id}).sort({createdAt: 1}).select({__v: 0, updatedAt: 0})
+    const friendId = [...user.followers, ...user.followings]
+    let friends = []
+    if(friendId?.length){
+        friends = await Promise.all(friendId.map(id => User.findById(id).select({profilePicture: 1, username: 1})))
+    }
+    res.send({...user._doc, posts, friends})
 }
 // --------------- follow a user --------->
 module.exports.followUser = async(req, res) => {

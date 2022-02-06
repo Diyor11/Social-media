@@ -19,6 +19,7 @@ export const PostCom = styled.div`
                 .MuiTypography-h5{
                     font-size: 15px;
                     font-weight: 600;
+                    text-transform: capitalize;
                     &:hover{
                         cursor: pointer;
                         color: #333;

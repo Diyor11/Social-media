@@ -42,8 +42,8 @@ export const deletePost = async (postId, userId) => {
     return data
 }
 
-export const getAllPosts = async (userId) => {
-    const {data} = await api.get(`posts/allposts/${userId}`).catch(e => console.log('Error'))
+export const getAllPosts = async () => {
+    const {data} = await api.get(`posts/all/posts`).catch(e => console.log('Error'))
     return data
 }
 
@@ -63,7 +63,11 @@ export const getAvatar = async () => {
 }
 
 export const suggistion = async () => {
-    const {data} = api.get('users').catch(e => console.log('Error'))
-    console.log(data)
+    const {data} = await api.get('users').catch(e => console.log('Error'))
+    return data
+}
+
+export const getUserById = async(_id) => {
+    const {data} = await api.get('users/' + _id).catch(e => console.log('Error'))
     return data
 }

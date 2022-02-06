@@ -6,7 +6,7 @@ const { updateUser, deleteUser, getUser, followUser, unfollowUser, getAllUsers, 
 router.put('/:id', [validId, authConfirm], updateUser)
 router.delete('/:id', [validId, authConfirm], deleteUser)
 router.get('/:id', [validId], getUser)
-router.get('/', getAllUsers)
+router.get('/', [authConfirm], getAllUsers)
 router.patch('/follow/:id', [validId, authConfirm], followUser)
 router.patch('/unfollow/:id', [validId, authConfirm], unfollowUser)
 router.patch('/', [authConfirm])

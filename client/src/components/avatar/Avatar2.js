@@ -1,9 +1,9 @@
 import React from 'react'
-import { Media, Info, useStyles } from './Avatar'
+import { Media, Info, useStyles, AvatarWrap } from './Avatar'
 import avatarImg from '../../assets/avatar'
 import { Stack, Button } from '@mui/material'
 
-const Avatar = () => {
+const Avatar = ({name, img}) => {
 
 
     const classes = useStyles()
@@ -11,10 +11,14 @@ const Avatar = () => {
     return (
         <>
         <Media>
-            <img alt='' src={avatarImg} />
+            <AvatarWrap>
+                    <label >
+                        <img alt='' src={img || avatarImg} />
+                    </label>
+            </AvatarWrap>
         </Media>
         <Info>
-            <h2>Emma Watson</h2>
+            <h2>{name}</h2>
             <h5>HI there i'm new</h5>
         </Info>
         <Stack className={classes.stack} direction='row' spacing={1}>

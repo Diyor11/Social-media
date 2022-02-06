@@ -7,8 +7,9 @@ import { ButtonBase } from '@mui/material'
 import moment from 'moment'
 import { useSelector } from 'react-redux'
 import avatarImg from '../../assets/avatar'
+import { NavLink } from 'react-router-dom'
 
-const Post = ({dropdownItems, _id, img, desc, createdAt, createrName, createrImg}) => {
+const Post = ({dropdownItems, _id, img, userId, desc, createdAt, createrName, createrImg}) => {
 
     const [dropdown, setDropdown] = useState(false)
     
@@ -34,7 +35,9 @@ const Post = ({dropdownItems, _id, img, desc, createdAt, createrName, createrImg
                 <div className='info'>
                     <Avatar src={createrImg} alt='Name' />
                     <div className='name'>
-                        <Typography variant='h5'>{createrName}</Typography>
+                        <NavLink to={userId === user._id ?`/profile`:`/user/${userId}`}>
+                            <Typography variant='h5'>{createrName}</Typography>
+                        </NavLink>
                         <h6>{moment().to(createdAt)}</h6>
                     </div>
                 </div>
@@ -112,7 +115,7 @@ const Post = ({dropdownItems, _id, img, desc, createdAt, createrName, createrImg
                     </p>
                 </CommentRow>
                 <WriteComment>
-                    <Avatar src={user.img || avatarImg} alt='Jhon' />
+                    <Avatar src={user.picture || avatarImg} alt='' />
                     <form onSubmit={handleSubmit}>
                         <input type="text" value={comment} onChange={e => setComment(e.target.value)} />
                         <div className="icons">
