@@ -30,5 +30,17 @@ module.exports.signIn = async(req, res) => {
 
     const {email, _id, username, from, city} = existEmail._doc
     const token = jwt.sign({email, _id}, process.env.JWT_KEY)
+    console.log(process.env.JWT_KEY)
     res.send({user: {email, _id, username, from, city}, token})
 }
+
+
+
+
+
+
+
+
+
+
+

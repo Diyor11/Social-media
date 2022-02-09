@@ -1,9 +1,10 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { NavLink } from 'react-router-dom'
 import { AppBar, Toolbar, Typography, Stack, IconButton, Badge, Avatar, ClickAwayListener, Divider, ButtonBase } from '@mui/material'
 import { useStyles, Form, Dropdown, DropdownItems, DropdownItem, IconBtn } from './navbar.elements'
 import { Search, Notifications, Message, Person, AccountCircle, BookmarkBorder, Settings, Help, Logout, Menu } from '@mui/icons-material'
 import {logOut} from '../../features/slices/userSlice'
+import {filterPost} from '../../features/slices/postSlice'
 import {useDispatch, useSelector} from 'react-redux'
 import avatarImg from '../../assets/avatar'
 
@@ -13,7 +14,30 @@ const Navbar = ({setNavOpen}) => {
     const [dropdown, setDropdown] = useState(false)
     const [avatarDropdown, setAvatarDropdown] = useState(false)
     const dispatch = useDispatch()
-    const user = useSelector(state => state.user.user)
+    const {user: {user}, posts: {posts}} = useSelector(state => state)
+
+    
+    const handleChange = ({target: {value}}) => {
+        let matchPosts = []
+        if(posts && posts.length && value){
+            posts.forEach((post) => {
+                const {createrName, desc} = post
+                if(createrName.toLowerCase().includes(value.toLowerCase()) || desc.toLowerCase().includes(value.toLowerCase())){
+                    matchPosts.push(post)
+                }
+            })  
+        }
+        if(matchPosts.length) {
+            dispatch(filterPost(matchPosts))
+        } else {
+            dispatch(filterPost(posts))
+        }
+    }
+
+    useEffect(() => {
+
+        return () => dispatch(filterPost(posts))
+    }, [])
 
     return (
         <div>
@@ -25,11 +49,11 @@ const Navbar = ({setNavOpen}) => {
                             Messanger
                         </NavLink>
                     </Typography>
-                    <Form>
+                    <Form autocomplete="off" onSubmit={e => e.preventDefault()}>
                         <label htmlFor="search">
                             <Search className={classes.searchIcon}/>
                         </label>
-                        <input type='text' placeholder='Search for  friends, posts or video...' id='search' />
+                        <input type='text' placeholder='Search for  friends, posts or video...' id='search' onChange={handleChange} />
                     </Form>
                     <Stack direction='row'>
                         <ClickAwayListener onClickAway={() => setDropdown(false)}>

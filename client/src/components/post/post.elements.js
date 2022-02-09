@@ -135,7 +135,12 @@ export const CommentRow = styled.div`
     margin-top: 8px;
 
     p{
-        b{display: block;}
+        span{
+            display: flex;
+            padding-bottom: 4px;
+        }
+        display: flex;
+        flex-direction: column;
         margin-left: 5px;
         background-color: ${({send}) => (send ? '#8ab2ff':'#c4c4c4')};
         border-radius: 11px;

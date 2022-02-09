@@ -59,32 +59,28 @@ module.exports.getUser = async(req, res) => {
     const user = await User.findById(req.params.id).select({username: 1, email: 1, profilePicture: 1, followers: 1, followings: 1, city: 1, from: 1})
     if(!user) return res.send({error: 'this user not found'})
     const posts = await Post.find({userId: req.params.id}).sort({createdAt: 1}).select({__v: 0, updatedAt: 0})
-    const friendId = [...user.followers, ...user.followings]
-    let friends = []
-    if(friendId?.length){
-        friends = await Promise.all(friendId.map(id => User.findById(id).select({profilePicture: 1, username: 1})))
-    }
-    res.send({...user._doc, posts, friends})
+    // const friendId = [...user.followers, ...user.followings]
+    // let friends = []
+    // if(friendId?.length){
+    //     friends = await Promise.all(friendId.map(id => User.findById(id).select({profilePicture: 1, username: 1})))
+    // }
+    res.send({...user._doc, posts})
 }
 // --------------- follow a user --------->
 module.exports.followUser = async(req, res) => {
-   
-    if(!req.body.userId) return res.send({error: 'userId required'})
-    if(!validUserId(req.body.userId)) return res.send({error: 'Invalid userId'})
+    const user = await User.findById(req.params.id).select({followers: 1})
+    const currentUser = await User.findById(req.userId).select({followings: 1})
 
-    const user = await User.findById(req.params.id)
-    const currentUser = await User.findById(req.body.userId)
-
-    if(!currentUser) return res.send({error: 'your userid not found ' + req.body.userId})
+    if(!currentUser) return res.send({error: 'your userid not found ' + req.userId})
     if(!user) return res.send({error: 'User not found this id'})
 
-    if (req.body.userId !== req.params.id) {
-        if(!user.followers.includes(req.body.userId)){
-            await user.updateOne({followers: [...user.followers, req.body.userId]})
-            await currentUser.updateOne({followings: [...currentUser.followings, req.params.id]})
-            res.send({success: 'You success follow'})
+    if (req.userId !== req.params.id) {
+        if(!user.followers.includes(req.userId)){
+            await user.updateOne({$push: {followers: req.userId}})
+            await currentUser.updateOne({$push: {followings: req.params.id}})
+            res.send({success: 'You success follow', _id: user._id})
         } else {
-            return res.send({error: 'You alreacy follow this acc'})
+            return res.send({error: 'You already follow this acc'})
         }
     } else {
         return res.send({error: 'You cant follow yourself'})
@@ -92,28 +88,24 @@ module.exports.followUser = async(req, res) => {
 }
 // --------------- unfollow a user --------->
 module.exports.unfollowUser = async(req, res) => {
+    const user = await User.findById(req.params.id).select({followers: 1})
+    const currentUser = await User.findById(req.userId).select({followings: 1})
 
-    if(!req.body.userId) return res.send({error: 'userId required'})
-    if(!validUserId(req.body.userId)) return res.send({error: 'Invalid userId'}) 
+    if(!currentUser) return res.send({error: 'your userid not found ' + req.userId})
 
-    const user = await User.findById(req.params.id)
-    const currentUser = await User.findById(req.body.userId)
-
-    if(!currentUser) return res.send({error: 'your userid not found ' + req.body.userId})
-
-    if(user && user.followers.includes(req.body.userId)){
-        await user.updateOne({followers: user.followers.filter(e => e !== req.body.userId)})
-        await currentUser.updateOne({followings: currentUser.followings.filter(e => e !== req.params.id)})
-        return res.send({success: 'You success unfollow'})
+    if(user && user.followers.includes(req.userId)){
+        await user.updateOne({$pull: {followers: req.userId}})
+        await currentUser.updateOne({$pull: {followings: req.params.id}})
+        return res.send({success: 'You success unfollow', _id: user._id})
     } else if(user){
         return res.send({error: 'You did\'n follow this user'})
     } else {
-        await currentUser.updateOne({followings: currentUser.followings.filter(e => e !== req.params.id)})
+        await currentUser.updateOne({$pull: {followings: req.params.id}})
         return res.send({success: 'This acc already deleted you success unfollow'})
     }
 }
 // --------------- get user avatar image --------->
 module.exports.getAvatar = async(req, res) => {
-    const avatar = await User.findById(req.userId).select({profilePicture: 1})
-    res.send(avatar?.profilePicture)
+    const data = await User.findById(req.userId).select({profilePicture: 1, followings: 1, followers: 1, _id: 0})
+    res.send(data)
 }

@@ -20,7 +20,7 @@ const Home = () => {
             dispatch(fetchAllPosts())
             dispatch(fetchAvatar())
         }
-    }, [])
+    }, [dispatch])
 
     return (
         <Layout>

@@ -1,21 +1,25 @@
-import React, {useState} from 'react'
+import React, {useState, useRef} from 'react'
 import { PostCom, LikeIcon, SaveIcon, HeartIcon, CommetnIcon, CommnetArea, CommentRow, WriteComment } from './post.elements'
 import { Avatar, Typography, IconButton, ClickAwayListener } from '@mui/material'
 import { MoreVert, SentimentSatisfiedAlt, CameraAlt, Send } from '@mui/icons-material'
 import { Dropdown, DropdownItems, DropdownItem } from '../navbar/navbar.elements'
 import { ButtonBase } from '@mui/material'
 import moment from 'moment'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import avatarImg from '../../assets/avatar'
 import { NavLink } from 'react-router-dom'
+import { likePost } from '../../features/slices/postSlice'
+import { likePost as likeApi } from '../../apis/api'
 
-const Post = ({dropdownItems, _id, img, userId, desc, createdAt, createrName, createrImg}) => {
+const Post = ({dropdownItems, _id, img, userId, desc, createdAt, createrName, createrImg, likes, comments}) => {
 
     const [dropdown, setDropdown] = useState(false)
     
     const [commentsShow, setCommentsShow] = useState(false)
     const [comment, setComment] = useState('')
     const user = useSelector(state => state.user.user)
+    const dispatch = useDispatch()
+    const commetnAreaRef = useRef()
 
     const closeDropdown = () => setDropdown(false)
     const emojes = ['😀', '😄', '😅', '🤣','😂', '🙂', '🥰', '😍', '😘','😜','🤫','🤔','🤐','🤨','😔','🤮','🥺','😡','👿','💔','❤️','💯','🖤','🤍','🤚','🖐','👌','👈','👉','👆','🖕','👇','☝','👍','👊','👏','🤲','💪','🤝','🙅','🙅‍♀️','🐵','🐒','🐖','🐇','🦒','🐢', '🤑', '🤕', '🥶', '🙏', '🙋‍♂️', '🙋‍♀️', '🤦‍♂️']                   
@@ -28,7 +32,22 @@ const Post = ({dropdownItems, _id, img, userId, desc, createdAt, createrName, cr
         setComment('')
     }
 
+    const likeOrDistLike = async() => {
+        const data = await likeApi(_id)
+        if(data && data.success)
+            dispatch(likePost({postId: _id, userId: user._id}))
+    }
 
+    const commentVisib = () => {
+        if(commentsShow){
+            window.scrollTo({left: 0, top: window.scrollY - 200, behavior: 'smooth'})
+            setCommentsShow(false)
+        } else {
+            setCommentsShow(true)
+            window.scrollTo({left: 0, top: window.scrollY + 200, behavior: 'smooth'})
+        }
+    } 
+    
     return (
         <PostCom>
             <div className="top">
@@ -73,47 +92,39 @@ const Post = ({dropdownItems, _id, img, userId, desc, createdAt, createrName, cr
             </div>
             <div className="bottom">
                 <div className="postIcons">
-                    <IconButton>
+                    <IconButton onClick={likeOrDistLike}>
                         <LikeIcon />
                     </IconButton>
                     <IconButton>
                         <SaveIcon />
                     </IconButton>
-                    <IconButton>
+                    <IconButton onClick={likeOrDistLike}>
                         <HeartIcon />
                     </IconButton>
-                    <Typography variant='h6'>32 <span>people like it</span></Typography>
+                    <Typography variant='h6'>{likes.length} <span>people like it</span></Typography>
                 </div>
-                <div className="comment" onClick={() => setCommentsShow(p => !p)}>
+                <div className="comment" onClick={commentVisib}>
                     <IconButton>
                         <CommetnIcon />
                     </IconButton>
                     <Typography variant='h6'>9 <span>Comment</span></Typography>
                 </div>
             </div>
-            <CommnetArea d={commentsShow ?'block':'none'}>
-
-                <CommentRow>
-                    <Avatar src='/images/4.jpg' />
-                    <p>
-                        <b>Mike Jons</b>
-                        Lorem ipsum dolor sit amet.
-                    </p>
-                </CommentRow>
-                <CommentRow>
-                    <Avatar src='/images/4.jpg' />
-                    <p>
-                        <b>Sardor Rahimxon</b>
-                        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Non accusantium repudiandae molestiae nam, sunt autem numquam qui sint obcaecati ex facilis earum dicta ipsum neque soluta, officiis aspernatur iusto molestias!
-                    </p>
-                </CommentRow>
-                <CommentRow send>
-                    <Avatar src='/images/2.jpg' />
-                    <p>
-                        <b>Umidov Sardor</b>
-                        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Non accusantium repudiandae molestiae nam, sunt autem numquam qui sint obcaecati ex facilis earum dicta ipsum neque soluta, officiis aspernatur iusto molestias!
-                    </p>
-                </CommentRow>
+            <CommnetArea ref={commetnAreaRef} d={commentsShow ?'block':'none'}>
+                {
+                    comments && comments.map(({comment, createdAt, userId}) => (
+                        <CommentRow send={false}>
+                            <Avatar src='/images/4.jpg' />
+                            <p>
+                                <span>
+                                    <b>Sardor Rahimxon</b>
+                                    <div>{}</div>
+                                </span>
+                                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Non accusantium repudiandae molestiae nam, sunt autem numquam qui sint obcaecati ex facilis earum dicta ipsum neque soluta, officiis aspernatur iusto molestias!
+                            </p>
+                        </CommentRow>
+                    ))
+                }
                 <WriteComment>
                     <Avatar src={user.picture || avatarImg} alt='' />
                     <form onSubmit={handleSubmit}>
@@ -123,7 +134,7 @@ const Post = ({dropdownItems, _id, img, userId, desc, createdAt, createrName, cr
                                 <SentimentSatisfiedAlt />
                                 <div className='emojes-list'>
                                 {
-                                    emojes.map((emoje, index) => <IconButton key={index} size='small' onClick={() => addEmoje(emoje)}>{emoje}</IconButton>)
+                                    emojes.map((emoje, index) => <IconButton component="div" color='primary' key={index} size='small' onClick={() => addEmoje(emoje)}>{emoje}</IconButton>)
                                 }
                             </div>
                             </IconButton>

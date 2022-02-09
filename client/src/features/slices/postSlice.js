@@ -7,7 +7,7 @@ export const fetchMyPosts = createAsyncThunk('postSlice/fetchMyPosts', getPostsB
 
 const postSlice = createSlice({
     name: 'ass',
-    initialState: {posts: [], myposts: []},
+    initialState: {posts: [], myposts: [], filteredPosts: []},
     reducers: {
         addPost: (state, {payload}) => {
             state.posts.unshift(payload)
@@ -21,6 +21,19 @@ const postSlice = createSlice({
         deletePost: (state, {payload}) => {
             state.posts = state.posts.filter(post => post._id !== payload)
             state.myposts = state.myposts.filter(post => post._id !== payload)
+        },
+        filterPost: (state, {payload}) => {
+            state.filteredPosts = payload
+            return state
+        },
+        likePost: (state, {payload: {userId, postId}}) => {
+            const postIndex = state.posts.findIndex(post => post._id === postId)
+            if(state.posts.find(obb => obb._id === postId).likes.includes(userId)){
+                state.posts[postIndex].likes = state.posts[postIndex].likes.filter(id => id !== userId)
+            } else {
+                state.posts[postIndex].likes.push(userId)
+            }
+            return state
         }
     },
     extraReducers: {
@@ -39,5 +52,5 @@ const postSlice = createSlice({
     }
 })
 
-export const { addPost, hidePost, deletePost } = postSlice.actions
+export const { addPost, hidePost, deletePost, filterPost, likePost } = postSlice.actions
 export default postSlice.reducer

@@ -28,7 +28,7 @@ export const updatePost = async (postData, _id) => {
 }
 
 export const likePost = async (postId, userId) => {
-    const {data} = await api.patch('/posts/like' + postId, {userId}).catch(e => console.log('Error'))
+    const {data} = await api.patch('/posts/like/' + postId).catch(e => console.log('Error'))
     return data
 }
 
@@ -68,6 +68,21 @@ export const suggistion = async () => {
 }
 
 export const getUserById = async(_id) => {
-    const {data} = await api.get('users/' + _id).catch(e => console.log('Error'))
+    const {data} = await api.get('/users/' + _id).catch(e => console.log('Error'))
+    return data
+}
+
+export const getFollow = async (_id) => {
+    const {data} = await api.patch('/users/follow/' + _id).catch(e => console.log('Error'))
+    return data
+}
+
+export const getUnFollow = async (_id) => {
+    const {data} = await api.patch('/users/unfollow/' + _id).catch(e => console.log('Error'))
+    return data
+}
+
+export const addComment = async(userId, postId, comment) => {
+    const {data} = await api.post('/posts/comment/' + postId).catch(e => console.log('Error'))
     return data
 }

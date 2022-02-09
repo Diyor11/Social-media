@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useEffect} from 'react'
 import { RightbarCom, useStyles } from './rightbar.elements'
 import { Typography, List, ListItem, ListItemAvatar, Avatar } from '@mui/material'
 import img from '../../assets/ad.png'
@@ -26,8 +26,8 @@ const Rightbar = () => {
             <Typography variant='h6' component='h2'>Suggestion</Typography>
             <List>
                 {
-                    user.allUsers && user.allUsers.map(({profilePicture, username, _id}) => (
-                        <ListItem>
+                    user.allUsers && user.allUsers.map(({profilePicture, username, _id}, index) => (
+                        <ListItem key={index}>
                             <ListItemAvatar>
                                 <Avatar src={profilePicture || defaultImg} />
                             </ListItemAvatar>

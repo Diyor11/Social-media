@@ -53,6 +53,8 @@ export const AvatarWrap = styled.div`
         img{
             width: 100%;        
             cursor: cell;
+            height: 100%;
+            object-fit: cover;
         }
         svg{
             position: absolute;

@@ -1,9 +1,10 @@
 const router = require('express').Router()
 const validId = require('../middlewares/validId')
 const authConfirm = require('../middlewares/auth')
-const { createPost, updatePost, deletePost, likePost, getPost, getAllPost, getUserPosts } = require('../controllers/post')
+const { createPost, updatePost, deletePost, likePost, getPost, getAllPost, getUserPosts, addComment } = require('../controllers/post')
 
 router.post('/', [authConfirm], createPost)
+router.post('/comment/:id', [validId ,authConfirm], addComment)
 router.put('/:id', [validId, authConfirm], updatePost)
 router.delete('/:id', [validId, authConfirm], deletePost)
 router.patch('/like/:id', [validId, authConfirm], likePost)

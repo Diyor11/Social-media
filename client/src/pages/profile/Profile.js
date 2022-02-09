@@ -15,21 +15,6 @@ import { deletePost as removePost, fetchMyPosts } from '../../features/slices/po
 import { fetchAvatar } from '../../features/slices/userSlice'
 import { NavLink } from 'react-router-dom'
 
-const Photo = ({img}) => (
-    <span>
-        <img alt='' src={img} />
-    </span>
-)
-
-const UserPhoto = ({profilePicture, name, _id}) => (
-    <span>
-        <img alt='' src={profilePicture} />
-        <NavLink to={`/user/${_id}`}>
-            <h6>{name}</h6>
-        </NavLink>
-    </span>
-)
-
 const Profile = () => {
 
     const [navOpen, setNavOpen] = useState(false)
@@ -95,7 +80,7 @@ const Profile = () => {
                                             </span>
                                         </InfoCard>
                                         {
-                                            myposts.map(({_id, userId, createdAt, desc, img, likes, createrName, createrImg}, index) => <Post createrName={createrName} createrImg={createrImg} img={img} likes={likes} desc={desc} createdAt={createdAt} userId={userId} _id={_id} dropdownItems={dropdownItems}  key={index}/>)
+                                            myposts.map(({_id, userId, createdAt, desc, img, likes, createrName, createrImg, comments}, index) => <Post likes={likes} createrName={createrName} createrImg={createrImg} img={img} desc={desc} createdAt={createdAt} userId={userId} _id={_id} dropdownItems={dropdownItems} comments={comments}  key={index}/>)
                                         }
                                     </Container>
                                 </Grid>
@@ -103,8 +88,8 @@ const Profile = () => {
                                     <Container>
                                         <Photos title='User friends'>
                                             {
-                                                user.allUsers && user.allUsers.map(({profilePicture, _id, username}) => (
-                                                    <span>
+                                                user && user.allUsers && user.allUsers.filter(({_id}) => [...user.followers, ...user.followings].includes(_id)).map(({profilePicture, _id, username}) => (
+                                                    <span key={_id}>
                                                         <img alt='' src={profilePicture} />
                                                         <NavLink to={`/user/${_id}`}>
                                                             <h6>{username}</h6>
@@ -115,8 +100,8 @@ const Profile = () => {
                                         </Photos>
                                         <Photos title=' User photos' >
                                             {
-                                                myposts && myposts.map(({img}) => (
-                                                    <span>
+                                                myposts && myposts.map(({img}, index) => (
+                                                    <span key={index}>
                                                         <img src={img} alt={''} />
                                                     </span>
                                                 ))

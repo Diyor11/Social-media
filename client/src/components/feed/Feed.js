@@ -7,7 +7,7 @@ import { hidePost } from '../../features/slices/postSlice'
 
 const Feed = () => {
 
-    const posts = useSelector(state => state.posts.posts)
+    const {posts, filteredPosts} = useSelector(state => state.posts)
     const dispatch = useDispatch()   
 
     const dropdownItems = [
@@ -21,7 +21,7 @@ const Feed = () => {
         <FeedCom>
             <CreatePost />
             {
-                posts.map(({_id, userId, createdAt, desc, img, likes, createrName, createrImg}, index) => <Post createrImg={createrImg} createrName={createrName} img={img} likes={likes} desc={desc} createdAt={createdAt} userId={userId} _id={_id} dropdownItems={dropdownItems}  key={index}/>)
+                (filteredPosts?.length ? filteredPosts:posts)?.map(({_id, userId, createdAt, desc, img, likes, createrName, createrImg, comments}, index) => <Post likes={likes} createrImg={createrImg} createrName={createrName} img={img} desc={desc} createdAt={createdAt} userId={userId} _id={_id} dropdownItems={dropdownItems} comments={comments}  key={index}/>)
             }
         </FeedCom>
     )
