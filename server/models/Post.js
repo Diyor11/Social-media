@@ -1,6 +1,15 @@
 const mongoose = require('mongoose')
 const Joi = require('joi')
 
+const commentScheme = new mongoose.Schema({
+    text: String,
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }
+
+})
+
 const Post = mongoose.model('Posts', mongoose.Schema({
     userId: {
         type: String,
@@ -22,6 +31,10 @@ const Post = mongoose.model('Posts', mongoose.Schema({
     likes: {
         type: [String],
         default: []
+    },
+    comments: {
+        type: [commentScheme],
+        default: []
     }
 }, { timestamps: true }))
 
@@ -33,4 +46,8 @@ const postValidater = Joi.object({
     createrName: Joi.string().min(3).max(50)
 })
 
-module.exports = { Post, postValidater }
+const commentValidater = Joi.object({
+    text: Joi.string().required()
+})
+
+module.exports = { Post, postValidater, commentValidater }

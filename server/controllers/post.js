@@ -1,4 +1,4 @@
-const { Post,  postValidater } = require('../models/Post')
+const { Post,  postValidater, commentValidater } = require('../models/Post')
 const { User } = require('../models/User')
 const validUserId = require('../utils/validUserId')
 
@@ -34,7 +34,6 @@ module.exports.updatePost = async(req, res) => {
 module.exports.deletePost = async(req, res) => {
 
     const post = await Post.findById(req.params.id)
-    console.log(post)
     if(!post) return res.send({error: 'This post not found'})
     if(post.userId === req.userId){
         const deletedPost = await post.deleteOne()
@@ -71,9 +70,8 @@ module.exports.getAllPost = async(req, res) => {
 
     const userPosts = await Post.find({userId: currentUser._id}).sort({createdAt: 1}).select({__v: 0})
     const ids = [...currentUser.followings, ...currentUser.followers]
-    console.log(ids)
-    const friendPosts  = await Promise.all(ids.map(id => Post.findOne({userId: id})))
-
+    let friendPosts  = await Promise.all(ids.map(id => Post.findOne({userId: id})))
+    friendPosts = friendPosts.filter(obb => isNaN(obb))
     res.send(userPosts.concat(friendPosts))
 }
 // --------------------------------- get my posts ---------------------------------
@@ -84,3 +82,20 @@ module.exports.getUserPosts = async(req, res) => {
     const userPosts = await Post.find({userId: currentUser._id}).sort({createdAt: 1}).select({__v: 0})
     res.send(userPosts)
 }
+
+module.exports.addComment = async(req, res) => {
+    const {value, error} = commentValidater.validate(req.body)
+
+    if(error) return res.status(400).send({error: error.details[0].message})
+    const post = await Post.findOneAndUpdate({_id: req.params.id}, {
+        $push: {
+            comments: {text: value.text, author: req.userId}
+        }
+    }, {new: true})
+
+    if(!post) return res.send({error: 'this posts not found'}) 
+    console.log(post)
+    res.send(post)
+}
+
+module
