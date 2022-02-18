@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Joi = require('joi')
 
-const User = mongoose.model('Users', mongoose.Schema({
+const User = mongoose.model('users', mongoose.Schema({
     username: {
         type: String,
         require: true,
@@ -16,52 +16,51 @@ const User = mongoose.model('Users', mongoose.Schema({
     },
     password: {
         type: String,
-        min: 6
+        min: 6,
+        require: true
     },
     profilePicture: {
         type: String,
         default: ''
     },
-    followers: {
-        type: [String],
-        default: []
+    friends: {
+        type: [{type: mongoose.Schema.Types.ObjectId, ref: 'users'}]
     },
-    followings: {
-        type: [String],
-        default: []
+    posts: {
+        type: [{type: mongoose.Schema.Types.ObjectId, ref: 'posts'}]
     },
-    isAdmin: {
-        type: Boolean,
-        default: false
+    info: {
+        desc: {
+            type: String,
+            max: 50,
+            default: ''
+        },
+        city: {
+            type: String,
+            max: 50,
+            require: true
+        },
+        from: {
+            type: String,
+            max: 50,
+            require: true
+        },
+        relationShip: {
+            type: String,
+            default: 'single'
+        }
     },
-    desc: {
-        type: String,
-        max: 50
-    },
-    city: {
-        type: String,
-        max: 50
-    },
-    from: {
-        type: String,
-        max: 50
-    },
-    relationShip: {
-        type: String
-    }
-}, {timestamps: true}))
+}))
 
 
 const userSignUpValidater = Joi.object({
     username: Joi.string().min(3).max(50).required(),
     email: Joi.string().email().max(50).required(),
     password: Joi.string().min(6).max(50).required(),
-    profilePicture: Joi.string(),
-    followers: Joi.array().items(Joi.string()),
-    followings: Joi.array().items(Joi.string()),
-    isAdmin: Joi.boolean(),
-    from: Joi.string().min(3).required(),
-    city: Joi.string().min(3).required()
+    info: Joi.object({
+        from: Joi.string().min(3).required(),
+        city: Joi.string().min(3).required()
+    }).required()
 })
 
 const userSignInValidater = Joi.object({
@@ -70,11 +69,13 @@ const userSignInValidater = Joi.object({
 })
 
 const userUpdateValidater = Joi.object({
-    desc: Joi.string().max(50),
-    city: Joi.string().max(50),
-    from: Joi.string().max(50),
-    relationShip: Joi.string(),
-    profilePicture: Joi.string().min(100)
+    profilePicture: Joi.string().min(100),
+    info: Joi.object({
+        desc: Joi.string().max(50),
+        city: Joi.string().max(50),
+        from: Joi.string().max(50),
+        relationShip: Joi.string(),
+    })
 })
 
 module.exports = {User, userSignUpValidater, userSignInValidater, userUpdateValidater}
