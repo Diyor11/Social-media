@@ -11,8 +11,9 @@ module.exports.createPost = async(req, res) => {
 
     if(!exitUser) return res.status(400).send({error: 'this user not found ' + req.userId})
 
-    const createdPost = await new Post({...value, creater: req.userId}).save()
+    const createdPost = await new Post({...value, creater: req.userId, createdAt: Date()}).save()
     res.send(createdPost)
+    await User.updateOne({_id: req.userId}, {$push: {posts: createdPost._id}}, {new: true})
 }
 // --------------------------------- update a post ---------------------------------
 module.exports.updatePost = async(req, res) => {
@@ -38,6 +39,7 @@ module.exports.deletePost = async(req, res) => {
     if(post.creater == req.userId){
         await post.deleteOne()
         res.send({success: 'post succes deleted', _id: post._id})
+        await User.updateOne({_id: req.userId}, {$pull: {posts: post._id}}, {new: true})
     } else {
         res.send({error: 'You can delete only your own posts'})
     }
@@ -68,7 +70,7 @@ module.exports.getAllPost = async(req, res) => {
     const currentUser = await User.findById(req.userId)
     if(!currentUser) return res.send({error: 'User not found'})
 
-    const userPosts = await Post.find({creater: currentUser._id}).sort({createdAt: 1}).select({__v: 0}).limit(10).populate('creater', 'username profilePicture')
+    const userPosts = await Post.find({creater: currentUser._id}).sort({createdAt: -1}).select({__v: 0}).limit(10).populate('creater', 'username profilePicture')
 
     let friendPosts  = await Promise.all(currentUser.friends.map(id => {
         Post.find({userId: id}).populate('creater', 'username profilePicture')
@@ -86,7 +88,7 @@ module.exports.getAllPost = async(req, res) => {
 //     const currentUser = await User.findById(req.params.id)
 //     if(!currentUser) return res.send({error: 'User not found'})
 
-//     const userPosts = await Post.find({userId: currentUser._id}).sort({createdAt: 1}).select({__v: 0})
+//     const userPosts = await Post.find({creater: currentUser._id}).sort({createdAt: -1}).populate('creater', 'username profilePicture').select('-password')
 //     res.send(userPosts)
 // }
 

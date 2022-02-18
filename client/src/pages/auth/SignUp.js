@@ -79,7 +79,7 @@ const SignUp = () => {
         } else {
             setInputErr({username: false, email: false, password: false, confirmPassword: false, city: false, country: false})
             setErrMsg('')
-            fetchData({username, email, password, city, from: country})
+            fetchData({username, email, password, info: { city, from: country }})
         }
     }
 

@@ -10,21 +10,23 @@ import Post from '../../components/post/Post'
 import { LocationOn, PriorityHigh, Favorite, AlternateEmail } from '@mui/icons-material'
 import Photos from '../../components/photos/Photos'
 import { useSelector, useDispatch } from 'react-redux'
-import { deletePost } from '../../apis/api'
-import { deletePost as removePost, fetchMyPosts } from '../../features/slices/postSlice'
+import { deletePost, getUserById } from '../../apis/api'
+import { deletePost as removePost } from '../../features/slices/postSlice'
 import { fetchAvatar } from '../../features/slices/userSlice'
 import { NavLink } from 'react-router-dom'
 
 const Profile = () => {
 
     const [navOpen, setNavOpen] = useState(false)
-    const {user: {user}, posts: {myposts}} = useSelector((state) => state)
+    const {user: {user}} = useSelector((state) => state)
+    const [myData, setMyData] = useState({username: '', email: '', posts: [], friends: [], info: {desc: '', city: '', from: '', relationShip: ''}})
     const dispatch = useDispatch()
     
     const deletePostFn = async(_id) => {
         const data = await deletePost(_id, user._id)
         if(data){
             dispatch(removePost(_id))
+            setMyData({...myData, posts: myData.posts.filter(post => post._id !== _id)})
         }
     }
 
@@ -33,12 +35,32 @@ const Profile = () => {
         {name: 'Embed', fn: () => {}},
     ]
 
+    const fetchMyData = async() => {
+        const data = await getUserById(user._id, '')
+        if(data){
+            setMyData(data)
+        }
+    }
+
+    const addMyposts = (d) => setMyData({...myData, posts: [...myData.posts, d]})
+
+    const likeOrDistlike = (postId, userId) => {
+        let {posts} = myData
+        const postIndex = posts.findIndex(post => post._id === postId)
+        if(posts[postIndex].likes.includes(userId)){
+            posts[postIndex].likes = posts[postIndex].likes.filter(id => id !== userId)
+        } else {
+            posts[postIndex].likes.push(userId)
+        }
+        setMyData({...myData, posts})
+    }
+
     useEffect(() => {
         if(user){
-            dispatch(fetchMyPosts(user._id))
             dispatch((fetchAvatar()))
+            fetchMyData()
         }
-    }, [])
+    }, [dispatch])
 
     return (
         <Layout>
@@ -57,18 +79,18 @@ const Profile = () => {
                             <Grid container>
                                 <Grid item md={7} sm={12}>
                                     <Container>
-                                        <CreatePost />
+                                        <CreatePost addMyposts={addMyposts} />
                                         <InfoCard>
                                             <Typography variant='h6'>User Infomation</Typography>
                                             <span>
                                                 <LocationOn />
                                                 <h6>
-                                                    from <span>{user.city}</span>, in <span>{user.from}</span>
+                                                    from <span>{myData.info.city}</span>, in <span>{myData.info.from}</span>
                                                 </h6>
                                             </span>
                                             <span>
                                                 <Favorite />
-                                                <h6>Single</h6>
+                                                <h6>{myData.info.relationShip}</h6>
                                             </span>
                                             <span>
                                                 <PriorityHigh />
@@ -76,11 +98,11 @@ const Profile = () => {
                                             </span>
                                             <span>
                                                 <AlternateEmail />
-                                                <h6>{user.email}</h6>
+                                                <h6>{myData.email}</h6>
                                             </span>
                                         </InfoCard>
                                         {
-                                            myposts.map(({_id, userId, createdAt, desc, img, likes, createrName, createrImg, comments}, index) => <Post likes={likes} createrName={createrName} createrImg={createrImg} img={img} desc={desc} createdAt={createdAt} userId={userId} _id={_id} dropdownItems={dropdownItems} comments={comments}  key={index}/>)
+                                            myData && myData.posts && myData.posts.map(({_id, createdAt, desc, img, likes, comments}, index) => <Post likes={likes} img={img} desc={desc} createdAt={createdAt} _id={_id} dropdownItems={dropdownItems} comments={comments} creater={{_id: user._id, profilePicture: user.picture, username: user.username}} likeOrDistlikePost={likeOrDistlike}  key={index}/>)
                                         }
                                     </Container>
                                 </Grid>
@@ -88,7 +110,7 @@ const Profile = () => {
                                     <Container>
                                         <Photos title='User friends'>
                                             {
-                                                user && user.allUsers && user.allUsers.filter(({_id}) => [...user.followers, ...user.followings].includes(_id)).map(({profilePicture, _id, username}) => (
+                                                myData && myData.friends && myData.friends.map(({profilePicture, _id, username}) => (
                                                     <span key={_id}>
                                                         <img alt='' src={profilePicture} />
                                                         <NavLink to={`/user/${_id}`}>
@@ -100,7 +122,7 @@ const Profile = () => {
                                         </Photos>
                                         <Photos title=' User photos' >
                                             {
-                                                myposts && myposts.map(({img}, index) => (
+                                                myData?.posts && myData.posts.map(({img}, index) => (
                                                     <span key={index}>
                                                         <img src={img} alt={''} />
                                                     </span>

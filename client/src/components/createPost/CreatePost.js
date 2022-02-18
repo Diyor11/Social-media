@@ -80,7 +80,7 @@ const ImageBox = styled.div`
     }
 `
 
-const CreatePost = () => {
+const CreatePost = ({addMyposts}) => {
 
     const [img, setImg] = useState('')
     const title = useRef('')
@@ -98,12 +98,15 @@ const CreatePost = () => {
         const desc = title.current.value
         if(!desc || !img)
             return alert("Description and Image required")
-        const post = {img, desc, userId: user._id, createrImg: user.picture, createrName: user.username}
-        const data = await createPost(post)  
+        const post = {img, desc}
+        let data = await createPost(post)  
         title.current.value=''
         setImg('')
         if(data){
+            data = {...data, creater: {username: user.username, profilePicture: user.picture, _id: user._id}}
             dispatch(addPost(data))
+            if(addMyposts)
+                addMyposts(data)
             window.scrollTo({top: 150, left: 0, behavior: 'smooth'})
         }
     }

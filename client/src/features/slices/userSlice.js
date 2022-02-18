@@ -28,8 +28,8 @@ const userSlice = createSlice({
         }
     },
     extraReducers: {
-        [fetchAvatar.fulfilled]: (state, {payload: {profilePicture, followers, followings}}) => {
-            state.user = {...state.user, picture: profilePicture, followers, followings}
+        [fetchAvatar.fulfilled]: (state, {payload: {profilePicture, friends, _id}}) => {
+            state.user = {...state.user, picture: profilePicture, friends}
             return state
         },
         [fetchAvatar.rejected]: () => {

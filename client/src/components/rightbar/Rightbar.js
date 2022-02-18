@@ -15,7 +15,7 @@ const Rightbar = () => {
 
     useEffect(() => {
         dispatch(fetchAllUsers())
-    },[])
+    },[dispatch])
 
     return (
         <RightbarCom>
@@ -26,7 +26,7 @@ const Rightbar = () => {
             <Typography variant='h6' component='h2'>Suggestion</Typography>
             <List>
                 {
-                    user.allUsers && user.allUsers.map(({profilePicture, username, _id}, index) => (
+                    user.allUsers && user.allUsers.filter(item => item._id !== user._id).map(({profilePicture, username, _id}, index) => (
                         <ListItem key={index}>
                             <ListItemAvatar>
                                 <Avatar src={profilePicture || defaultImg} />

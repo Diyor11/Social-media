@@ -22,7 +22,7 @@ const Post = mongoose.model('posts', mongoose.Schema({
     comments: {
         type: [{type: mongoose.Schema.Types.ObjectId}]
     },
-    createdAt: {type: Date, default: Date()}
+    createdAt: {type: Date}
 }))
 
 const postValidater = Joi.object({

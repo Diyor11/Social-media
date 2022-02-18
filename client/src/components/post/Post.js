@@ -11,7 +11,7 @@ import { NavLink } from 'react-router-dom'
 import { likePost } from '../../features/slices/postSlice'
 import { likePost as likeApi } from '../../apis/api'
 
-const Post = ({dropdownItems, _id, img, userId, desc, createdAt, createrName, createrImg, likes, comments}) => {
+const Post = ({dropdownItems, _id, img, desc, createdAt, creater, likes, comments, likeOrDistlikePost}) => {
 
     const [dropdown, setDropdown] = useState(false)
     
@@ -34,8 +34,12 @@ const Post = ({dropdownItems, _id, img, userId, desc, createdAt, createrName, cr
 
     const likeOrDistLike = async() => {
         const data = await likeApi(_id)
-        if(data && data.success)
-            dispatch(likePost({postId: _id, userId: user._id}))
+        if(data && data.success){
+            if(likeOrDistlikePost)
+                likeOrDistlikePost(_id, user._id)
+            else
+                dispatch(likePost({postId: _id, userId: user._id}))
+        }
     }
 
     const commentVisib = () => {
@@ -52,10 +56,10 @@ const Post = ({dropdownItems, _id, img, userId, desc, createdAt, createrName, cr
         <PostCom>
             <div className="top">
                 <div className='info'>
-                    <Avatar src={createrImg} alt='Name' />
+                    <Avatar src={creater.profilePicture} alt='Name' />
                     <div className='name'>
-                        <NavLink to={userId === user._id ?`/profile`:`/user/${userId}`}>
-                            <Typography variant='h5'>{createrName}</Typography>
+                        <NavLink to={creater._id === user._id ?`/profile`:`/user/${creater._id}`}>
+                            <Typography variant='h5'>{creater.username}</Typography>
                         </NavLink>
                         <h6>{moment().to(createdAt)}</h6>
                     </div>

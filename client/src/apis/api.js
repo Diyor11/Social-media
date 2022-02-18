@@ -18,7 +18,7 @@ export const signIn = async (user) => {
 }
 
 export const createPost = async (postData) => {
-    const {data} = await api.post('/posts', postData).catch(e => console.log('Error'))
+    const {data} = await api.post('/posts/create', postData).catch(e => console.log('Error'))
     return data
 }
 
@@ -63,12 +63,12 @@ export const getAvatar = async () => {
 }
 
 export const suggistion = async () => {
-    const {data} = await api.get('users').catch(e => console.log('Error'))
+    const {data} = await api.get('/users?select=username%20profilePicture').catch(e => console.log('Error'))
     return data
 }
 
-export const getUserById = async(_id) => {
-    const {data} = await api.get('/users/' + _id).catch(e => console.log('Error'))
+export const getUserById = async(_id, query) => {
+    const {data} = await api.get('/users/' + _id + query).catch(e => console.log('Error'))
     return data
 }
 

@@ -64,15 +64,11 @@ module.exports.getAllUsers = async(req, res) => {
 }
 // --------------- get a user by id ------ ->
 module.exports.getUser = async(req, res) => {
-    const user = await User.findById(req.params.id).select('-password').populate('friends', 'profilePicture username')
+    const user = await User.findById(req.params.id).select(`-password -__v ${req.query?.picture === 'true'?'':'-profilePicture'}`)
+        .populate('friends', 'profilePicture username')
+        .populate('posts', '-__v')
     if(!user) return res.send({error: 'this user not found'})
-    const posts = await Post.find({userId: req.params.id}).sort({createdAt: 1}).select({__v: 0, updatedAt: 0})
-    // const friendId = [...user.followers, ...user.followings]
-    // let friends = []
-    // if(friendId?.length){
-    //     friends = await Promise.all(friendId.map(id => User.findById(id).select({profilePicture: 1, username: 1})))
-    // }
-    res.send({...user._doc, posts})
+    res.send(user._doc)
 }
 // --------------- follow a user --------->
 module.exports.addFriend = async(req, res) => {
@@ -113,6 +109,6 @@ module.exports.removeFriend = async(req, res) => {
 }
 // --------------- get user avatar image --------->
 module.exports.getAvatar = async(req, res) => {
-    const data = await User.findById(req.userId).select({profilePicture: 1, followings: 1, followers: 1, _id: 0})
+    const data = await User.findById(req.userId).select('profilePicture friends -_id')
     res.send(data)
 }

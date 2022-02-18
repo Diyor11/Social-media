@@ -16,10 +16,21 @@ import {useDispatch, useSelector} from 'react-redux'
 const User = () => {
 
     const [navOpen, setNavOpen] = useState(false)
-    const [user, setUser] = useState({name: '', img: '', city: '', from: '', email: '', posts: [], followers: [], followings: []})
+    const [user, setUser] = useState({username: '', profilePicture: '', email: '', info: {desc: '', city: '', from: '', relationShip: ''}, posts: [], friends: []})
     const {id} = useParams()
     const dispatch = useDispatch()
     const myAcc = useSelector(state => state.user.user)
+
+    const likeOrDistlike = (postId, userId) => {
+        let {posts} = user
+        const postIndex = posts.findIndex(post => post._id === postId)
+        if(posts[postIndex].likes.includes(userId)){
+            posts[postIndex].likes = posts[postIndex].likes.filter(id => id !== userId)
+        } else {
+            posts[postIndex].likes.push(userId)
+        }
+        setUser({...user, posts})
+    }
 
     const dropdownItems = [
         {name: 'Follow', fn: () => {}},
@@ -29,14 +40,14 @@ const User = () => {
     ]
 
     const fetchData = async() => {
-        const data = await getUserById(id)
+        const data = await getUserById(id, '?picture=true')
         if(data){
-            setUser({name: data.username, img: data.profilePicture, city: data.city, from: data.from, email: data.email, posts: data.posts, followers: data.followers, followings: data.followings})
+            setUser(data)
         }
     }
 
     const followOrUnFollow = async() => {
-        if(user && myAcc.followings.includes(id)){
+        if(user && user.friends.some(item => item._id === myAcc._id)){
             dispatch(fetchUnFollow(id))
         } else if(user){
             dispatch(fetchFollow(id))
@@ -47,7 +58,7 @@ const User = () => {
 
     useEffect(() => {
         fetchData()
-        return () => setUser({name: '', img: '', city: '', from: '', email: '', posts: [], followers: [], followings: []})
+        return () => setUser({_id: '', username: '', profilePicture: '', email: '', info: {desc: '', city: '', from: '', relationShip: ''}, posts: [], friends: []})
     }, [id])
 
     return (
@@ -63,7 +74,7 @@ const User = () => {
                     </Grid>
                     <Grid item md={9} sm={8} xs={12} px={{md: '16px', sm: '8px', xs: '0'}}>
                         <Box height='100%' bgcolor='#fff'>
-                            <Avatar fn={followOrUnFollow} img={user.img} name={user.name} follow={myAcc.followings.includes(id) ? 'unfollow':'follow'}   />
+                            <Avatar fn={followOrUnFollow} img={user.profilePicture} name={user.username} follow={user.friends.some(item => item._id === myAcc._id) ? 'unfollow':'follow'}   />
                             <Grid container>
                                 <Grid item md={7} sm={12}>
                                     <Container>
@@ -71,11 +82,11 @@ const User = () => {
                                             <Typography variant='h6'>User Infomation</Typography>
                                             <span>
                                                 <LocationOn />
-                                                <h6>from <span>{user.city}</span>, in <span>{user.from}</span></h6>
+                                                <h6>from <span>{user.info.city}</span>, in <span>{user.info.from}</span></h6>
                                             </span>
                                             <span>
                                                 <Favorite />
-                                                <h6>Single</h6>
+                                                <h6>{user.info.relationShip}</h6>
                                             </span>
                                             <span>
                                                 <PriorityHigh />
@@ -87,7 +98,7 @@ const User = () => {
                                             </span>
                                         </InfoCard>
                                         {
-                                            user && user.posts.map(({_id, userId, createdAt, desc, img, likes, createrName, createrImg, comments}, index) => <Post likes={likes} createrImg={createrImg} createrName={createrName} img={img} desc={desc} createdAt={createdAt} userId={userId} _id={_id} dropdownItems={dropdownItems} comments={comments}  key={index}/>)
+                                            user && user.posts && user.posts.map(({_id, createdAt, desc, img, likes, comments}, index) => <Post likes={likes} creater={{_id: user._id, username: user.username, profilePicture: user.profilePicture}} img={img} desc={desc} createdAt={createdAt} _id={_id} dropdownItems={dropdownItems} comments={comments} likeOrDistlikePost={likeOrDistlike}  key={index}/>)
                                         }                                        
                                     </Container>
                                 </Grid>
@@ -95,7 +106,7 @@ const User = () => {
                                         <Container>
                                         <Photos title='User friends'>
                                             {
-                                                user && myAcc && [...myAcc.allUsers, {profilePicture: myAcc.picture, username: myAcc.username, _id: myAcc._id}].filter(({_id}) => [...user.followers, ...user.followings].includes(_id)).map(({profilePicture, _id, username}) => (
+                                                user && user.friends && user.friends.map(({profilePicture, _id, username}) => (
                                                     <span key={_id}>
                                                         <img alt='' src={profilePicture} />
                                                         <NavLink to={_id === myAcc._id ? '/profile' : `/user/${_id}`}>
