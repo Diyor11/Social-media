@@ -16,10 +16,10 @@ export const CommentRow = styled.div`
     }
 
     div.comment-main{
-        background-color: ${({send}) => (send ? '#8ab2ff':'#c4c4c4')};
+        background-color: ${({send}) => (send ? '#ace7ac':'#c4c4c4')};
         border-radius: 11px;
         max-width: 70%;
-        min-width: 170px;
+        min-width: 200px;
         padding: 7px;
         margin: 0 5px;
         display: flex;
@@ -43,7 +43,7 @@ export const CommentRow = styled.div`
         opacity: 0;
         transition: 0.3s;
         transition-delay: 0.2s;
-        display: flex;
+        display: ${({send}) => send ? 'flex':'none'};
         flex-direction: column;
         .edit-btn{
             color: #202085;

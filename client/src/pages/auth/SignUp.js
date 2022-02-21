@@ -106,10 +106,10 @@ const SignUp = () => {
                 <ErrMessage >
                     {errorMsg}
                 </ErrMessage>
-                <ButtonBase>
+                <ButtonBase component='div'>
                     <button className='login'>{loading ? <Loader /> : 'Sign up'}</button>
                 </ButtonBase>
-                <ButtonBase>
+                <ButtonBase component='div'>
                     <button className='google-btn'>
                         <img alt='Google' src={gImg} /><span>Sign up with Google</span>
                     </button>

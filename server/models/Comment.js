@@ -12,8 +12,7 @@ const Comment = mongoose.model('comments', mongoose.Schema({
 }))
 
 const commentValidater = Joi.object({
-    text: Joi.string().min(1).required(),
-    postId: Joi.string().min(24).max(24).required()
+    text: Joi.string().min(1).required()
 })
 
 

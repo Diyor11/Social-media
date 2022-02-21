@@ -65,7 +65,7 @@ const User = () => {
         fetchData()
         dispatch(fetchAvatar())
         return () => setUser({_id: '', username: '', profilePicture: '', email: '', info: {desc: '', city: '', from: '', relationShip: ''}, posts: [], friends: []})
-    }, [id])
+    }, [id, dispatch])
 
     return (
         <Layout>
@@ -104,7 +104,7 @@ const User = () => {
                                             </span>
                                         </InfoCard>
                                         {
-                                            user && user.posts && user.posts.map(({_id, createdAt, desc, img, likes, comments}, index) => <Post likes={likes} creater={{_id: user._id, username: user.username, profilePicture: user.profilePicture}} img={img} desc={desc} createdAt={createdAt} _id={_id} dropdownItems={dropdownItems} comments={comments} likeOrDistlikePost={likeOrDistlike}  key={index}/>)
+                                            user && user.posts && user.posts.map(({_id, createdAt, desc, img, likes, comments}, index) => <Post likes={likes} creater={{_id: user._id, username: user.username, profilePicture: user.profilePicture}} img={img} desc={desc} createdAt={createdAt} _id={_id} dropdownItems={dropdownItems} commentsId={comments} likeOrDistlikePost={likeOrDistlike}  key={index}/>)
                                         }                                        
                                     </Container>
                                 </Grid>

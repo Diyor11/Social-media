@@ -100,8 +100,7 @@ module.exports.addComment = async(req, res) => {
     const {value, error} = commentValidater.validate(req.body)
 
     if(error) return res.status(400).send({error: error.details[0].message})
-    if(!validUserId(value.postId)) return res.status(400).send({error: 'post id invalid'})
-    const comment = await Comment({text: value.text, postId: value.postId, creater: req.userId, createdAt: Date()}).save()
+    const comment = await Comment({text: value.text, postId: req.params.id, creater: req.userId, createdAt: Date()}).save()
     if(!comment) return res.send({error: 'Comment not saved'})
 
     const post = await Post.findByIdAndUpdate(req.params.id, {
@@ -115,20 +114,28 @@ module.exports.addComment = async(req, res) => {
 }
 
 module.exports.deleteComment = async(req, res) => {
-    if(!req.body.postId || !validUserId(req.body.postId)) return res.status(400).send({error: 'Post id invalid'})
-    const comment = await Comment.findById(req.params.id).select('_id')
+    const comment = await Comment.findById(req.params.id).select('postId creater')
     if(!comment) return res.status(404).send({error: 'This comment not found'})
-    const post = await Post.findByIdAndUpdate(req.body.postId, {$pull: {comments: comment._id}}, {new: true})
-    if(!post) return res.status(404).send({error: 'This post not found'})
-    await comment.deleteOne()
-    res.send(comment)
+    const post = await Post.findByIdAndUpdate(comment.postId, {$pull: {comments: comment._id}}, {new: true})
+    if(comment.creater == req.userId){
+        if(!post) return res.status(404).send({error: 'This post not found'})
+        await comment.deleteOne()
+        res.send(comment)
+    } else {
+        res.status(403).send({error: 'You can delete only your own comments'})
+    }
 }
 module.exports.updateComment = async(req, res) => {
     const {error, value} = commentValidater.validate(req.body)
     if(error) return res.send({error: error.details[0].message})
-    const comment = await Comment.findByIdAndUpdate(req.params.id, {...value}, {new: true}).select('_id text')
+    const comment = await Comment.findById(req.params.id).select('creater')
     if(!comment) return res.status(404).send({error: 'Comment not found'})
-    res.send(comment)
+    if(req.userId == comment.creater){
+        await comment.updateOne(value)  
+        res.send({...comment._doc, text: value.text})
+    }  else {
+        res.status(403).send({error: 'You can update only your own comment'})
+    }
 }
 
 module.exports.getPostComments = async(req, res) => {

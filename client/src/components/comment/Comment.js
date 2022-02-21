@@ -5,7 +5,8 @@ import { ModeEdit, Delete } from '@mui/icons-material'
 import avatarImg from '../../assets/avatar'
 import moment from 'moment'
 
-const Comment = ({send, createdAt, _id, creater, text}) => {
+const Comment = ({send, createdAt, _id, creater, text, removeComment, setEditingId}) => {
+
 
     return (
             <CommentRow send={send}>
@@ -14,16 +15,16 @@ const Comment = ({send, createdAt, _id, creater, text}) => {
                     <span className='comment-top'>
                         <b className='user-name'>{creater?.username}</b>
                         <div className="time">
-                            {moment().format('HH:mm')}
+                            {moment(createdAt).format('HH:mm')}
                         </div>
                     </span>
                     <p className="comment-text">{text}</p>
                 </div>
                 <div className="menu">
-                    <IconButton className='edit-btn'>
+                    <IconButton className='edit-btn' onClick={() => setEditingId(_id)}>
                         <ModeEdit />
                     </IconButton>
-                    <IconButton className="delete-btn">
+                    <IconButton className="delete-btn" onClick={() => removeComment(_id)}>
                         <Delete />
                     </IconButton>
                 </div>

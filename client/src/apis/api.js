@@ -82,12 +82,22 @@ export const getUnFollow = async (_id) => {
     return data
 }
 
-export const addComment = async(userId, postId, comment) => {
-    const {data} = await api.post('/posts/comment/' + postId).catch(e => console.log('Error'))
+export const addComment = async(postId, text) => {
+    const {data} = await api.post('/posts/comment/' + postId, {text}).catch(e => console.log('Error'))
     return data
 }
 
 export const getComments = async(_id) => {
-    const {data} = await api.get('/posts/all/comments/' + _id)
+    const {data} = await api.get('/posts/all/comments/' + _id).catch(e => console.log('Error get post comments'))
     return data
 }
+
+export const deleteComment = async(commentId) => {
+    const {data} = await api.delete('/posts/comment/' + commentId).catch(e => console.log('Error comment delete'))
+    return data
+}
+
+export const editComment = async(commentId, text) => {
+    const {data} = await api.put('/posts/comment/' + commentId, {text}).catch(e => console.log('Error adit comment'))
+    return data
+} 

@@ -1,4 +1,4 @@
-import React, {useState, useRef, useMemo} from 'react'
+import React, {useState, useRef, useMemo, useEffect} from 'react'
 import { PostCom, LikeIcon, SaveIcon, HeartIcon, CommetnIcon, CommnetArea, WriteComment } from './post.elements'
 import { Avatar, Typography, IconButton, ClickAwayListener } from '@mui/material'
 import { MoreVert, SentimentSatisfiedAlt, CameraAlt, Send } from '@mui/icons-material'
@@ -9,22 +9,34 @@ import { useSelector, useDispatch } from 'react-redux'
 import avatarImg from '../../assets/avatar'
 import { NavLink } from 'react-router-dom'
 import { likePost } from '../../features/slices/postSlice'
-import { likePost as likeApi, getComments } from '../../apis/api'
+import { likePost as likeApi, getComments, addComment, deleteComment, editComment } from '../../apis/api'
 import Comment from '../comment/Comment'
 import Loader from '../../components/loader/Loader2'
 
-const Post = ({dropdownItems, _id, img, desc, createdAt, creater, likes, likeOrDistlikePost}) => {
+const Post = ({dropdownItems, _id, img, desc, createdAt, creater, likes, likeOrDistlikePost, commentsId}) => {
 
     const [dropdown, setDropdown] = useState(false)
     
     const [commentsShow, setCommentsShow] = useState(false)
     const [comment, setComment] = useState('')
     const [comments, setComments] = useState([])
+    const [editingId, setEditingId] = useState('')
     const [loading, setLoading] = useState(false)
     const user = useSelector(state => state.user.user)
     const closeDropdown = () => setDropdown(false)
     const addEmoje = (emoje) => setComment(p => p + emoje)
-    const renderedComments = useMemo(() => mapComments(comments, user._id), [comments, user._id])
+
+    const renderedComments = useMemo(() => {
+        const removeComment = async(commentId) => {
+            const data = await deleteComment(commentId)
+            if(data && data._id){
+                setComments(comments.filter(c => c._id !== data._id))
+            }
+        }
+
+        return mapComments(comments, user._id, removeComment, setEditingId)
+    }, [comments, user._id])
+    
     const renderDropdowns = useMemo(() => mapDropdowns(dropdownItems, closeDropdown, _id), [_id ,dropdownItems])
     const renderEmojes = useMemo(() => mapEmojes(addEmoje), [])
     const dispatch = useDispatch()
@@ -39,11 +51,34 @@ const Post = ({dropdownItems, _id, img, desc, createdAt, creater, likes, likeOrD
         }
     }
 
+    const editCommentText = async() => {
+        const data = await editComment(editingId, comment)
+        const cIndex = comments.findIndex(c => c._id === editingId)
+        if(data && data._id && cIndex + 1){
+            setComments(comments.map((c) => c._id === editingId ? {...comments[cIndex], text: comment}:c))
+            setEditingId('')
+            setComment('')
+        }
+    }
+
+    const saveComment = async() => {
+        const data = await addComment(_id, comment)
+        setComment('')
+        if(data && data?._id){
+            setComments([...comments, {...data, creater: {_id: data.creater, profilePicture: user.picture, username: user.username}}])
+            window.scrollTo({left: 0, top: window.scrollY + 80, behavior: 'smooth'})
+        } else {
+            console.log('Comment not saved')
+        }
+
+    }
+
     const handleSubmit = e => {
         e.preventDefault()
 
-        alert(comment)
-        setComment('')
+        if(!comment) return alert('Comment required')
+        if(editingId) editCommentText()
+        else saveComment()
     }
 
     const likeOrDistLike = async() => {
@@ -58,7 +93,6 @@ const Post = ({dropdownItems, _id, img, desc, createdAt, creater, likes, likeOrD
 
     const commentVisib = () => {
         if(commentsShow){
-            window.scrollTo({left: 0, top: window.scrollY - 200, behavior: 'smooth'})
             setCommentsShow(false)
         } else {
             setCommentsShow(true)
@@ -66,6 +100,14 @@ const Post = ({dropdownItems, _id, img, desc, createdAt, creater, likes, likeOrD
             window.scrollTo({left: 0, top: window.scrollY + 200, behavior: 'smooth'})
         }
     } 
+
+    useEffect(() => {
+        if(editingId){
+            const targetComment = comments.find(c => c._id === editingId)
+            if(targetComment)
+                setComment(targetComment.text || '')
+        }
+    }, [editingId])
     
     return (
         <PostCom>
@@ -118,7 +160,7 @@ const Post = ({dropdownItems, _id, img, desc, createdAt, creater, likes, likeOrD
                     <IconButton>
                         <CommetnIcon />
                     </IconButton>
-                    <Typography variant='h6'>9 <span>Comment</span></Typography>
+                    <Typography variant='h6'>{commentsId?.length} <span>Comment</span></Typography>
                 </div>
             </div>
             <CommnetArea ref={commetnAreaRef} d={commentsShow ?'block':'none'}>
@@ -150,10 +192,10 @@ const Post = ({dropdownItems, _id, img, desc, createdAt, creater, likes, likeOrD
 
 export default Post
 
-function mapComments(comments, userId) {
+function mapComments(comments, userId, removeComment, setEditingId) {
 
     return comments && (comments.length ? (
-        comments.map(({_id, text, creater, createdAt}, index) => <Comment send={creater._id === userId} key={index} _id={_id} text={text} creater={creater} createdAt={createdAt} />)
+        comments.map(({_id, text, creater, createdAt}, index) => <Comment send={creater._id === userId} key={index} _id={_id} text={text} creater={creater} createdAt={createdAt} removeComment={removeComment} setEditingId={setEditingId} />)
     ):<h4>No comment</h4>)
 }
 

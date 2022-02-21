@@ -101,7 +101,7 @@ const Profile = () => {
                                             </span>
                                         </InfoCard>
                                         {
-                                            myData && myData.posts && myData.posts.map(({_id, createdAt, desc, img, likes, comments}, index) => <Post likes={likes} img={img} desc={desc} createdAt={createdAt} _id={_id} dropdownItems={dropdownItems} comments={comments} creater={{_id: user._id, profilePicture: user.picture, username: user.username}} likeOrDistlikePost={likeOrDistlike}  key={index}/>)
+                                            myData && myData.posts && myData.posts.map(({_id, createdAt, desc, img, likes, comments}, index) => <Post likes={likes} img={img} desc={desc} createdAt={createdAt} _id={_id} dropdownItems={dropdownItems} commentsId={comments} creater={{_id: user._id, profilePicture: user.picture, username: user.username}} likeOrDistlikePost={likeOrDistlike}  key={index}/>)
                                         }
                                     </Container>
                                 </Grid>

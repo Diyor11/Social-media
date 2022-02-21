@@ -92,10 +92,10 @@ const SignIn = () => {
                 <ErrMessage >
                     {errorMsg}
                 </ErrMessage>
-                <ButtonBase>
+                <ButtonBase component='div'>
                     <button className='login' style={{background: loading && '#6593ed'}} > {loading ? <Loader />: 'Login'} </button>
                 </ButtonBase>
-                <ButtonBase>
+                <ButtonBase component='div'>
                     <button className='google-btn' >
                         <img alt='' src={gImg} /><span>Sign in with Google</span>
                     </button>
