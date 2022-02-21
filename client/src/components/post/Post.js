@@ -1,5 +1,5 @@
-import React, {useState, useRef} from 'react'
-import { PostCom, LikeIcon, SaveIcon, HeartIcon, CommetnIcon, CommnetArea, CommentRow, WriteComment } from './post.elements'
+import React, {useState, useRef, useMemo} from 'react'
+import { PostCom, LikeIcon, SaveIcon, HeartIcon, CommetnIcon, CommnetArea, WriteComment } from './post.elements'
 import { Avatar, Typography, IconButton, ClickAwayListener } from '@mui/material'
 import { MoreVert, SentimentSatisfiedAlt, CameraAlt, Send } from '@mui/icons-material'
 import { Dropdown, DropdownItems, DropdownItem } from '../navbar/navbar.elements'
@@ -9,21 +9,35 @@ import { useSelector, useDispatch } from 'react-redux'
 import avatarImg from '../../assets/avatar'
 import { NavLink } from 'react-router-dom'
 import { likePost } from '../../features/slices/postSlice'
-import { likePost as likeApi } from '../../apis/api'
+import { likePost as likeApi, getComments } from '../../apis/api'
+import Comment from '../comment/Comment'
+import Loader from '../../components/loader/Loader2'
 
-const Post = ({dropdownItems, _id, img, desc, createdAt, creater, likes, comments, likeOrDistlikePost}) => {
+const Post = ({dropdownItems, _id, img, desc, createdAt, creater, likes, likeOrDistlikePost}) => {
 
     const [dropdown, setDropdown] = useState(false)
     
     const [commentsShow, setCommentsShow] = useState(false)
     const [comment, setComment] = useState('')
+    const [comments, setComments] = useState([])
+    const [loading, setLoading] = useState(false)
     const user = useSelector(state => state.user.user)
+    const closeDropdown = () => setDropdown(false)
+    const addEmoje = (emoje) => setComment(p => p + emoje)
+    const renderedComments = useMemo(() => mapComments(comments, user._id), [comments, user._id])
+    const renderDropdowns = useMemo(() => mapDropdowns(dropdownItems, closeDropdown, _id), [_id ,dropdownItems])
+    const renderEmojes = useMemo(() => mapEmojes(addEmoje), [])
     const dispatch = useDispatch()
     const commetnAreaRef = useRef()
 
-    const closeDropdown = () => setDropdown(false)
-    const emojes = ['😀', '😄', '😅', '🤣','😂', '🙂', '🥰', '😍', '😘','😜','🤫','🤔','🤐','🤨','😔','🤮','🥺','😡','👿','💔','❤️','💯','🖤','🤍','🤚','🖐','👌','👈','👉','👆','🖕','👇','☝','👍','👊','👏','🤲','💪','🤝','🙅','🙅‍♀️','🐵','🐒','🐖','🐇','🦒','🐢', '🤑', '🤕', '🥶', '🙏', '🙋‍♂️', '🙋‍♀️', '🤦‍♂️']                   
-    const addEmoje = (emoje) => setComment(p => p + emoje)
+    const fetchComments = async() => {
+        setLoading(true)
+        const data = await getComments(_id)
+        setLoading(false)
+        if(data){
+            setComments(data)
+        }
+    }
 
     const handleSubmit = e => {
         e.preventDefault()
@@ -48,6 +62,7 @@ const Post = ({dropdownItems, _id, img, desc, createdAt, creater, likes, comment
             setCommentsShow(false)
         } else {
             setCommentsShow(true)
+            fetchComments()
             window.scrollTo({left: 0, top: window.scrollY + 200, behavior: 'smooth'})
         }
     } 
@@ -71,15 +86,7 @@ const Post = ({dropdownItems, _id, img, desc, createdAt, creater, likes, comment
                         </IconButton>
                         <Dropdown dropdown={dropdown} w='120px'>
                             <DropdownItems>
-                                {
-                                    dropdownItems?.length && dropdownItems.map(({name, fn}, index) => (
-                                        <ButtonBase key={index} sx={{width: '100%', borderRadius: '5px'}} onClick={closeDropdown}>
-                                            <DropdownItem onClick={() => fn(_id)}>
-                                                <h6>{name}</h6>
-                                            </DropdownItem>
-                                        </ButtonBase>
-                                    ))
-                                }
+                                {renderDropdowns}
                                 <ButtonBase onClick={closeDropdown} sx={{width: '100%', borderRadius: '5px'}}>
                                     <DropdownItem >
                                         <h6>Cencel</h6>
@@ -115,20 +122,7 @@ const Post = ({dropdownItems, _id, img, desc, createdAt, creater, likes, comment
                 </div>
             </div>
             <CommnetArea ref={commetnAreaRef} d={commentsShow ?'block':'none'}>
-                {
-                    comments && comments.map(({comment, createdAt, userId}) => (
-                        <CommentRow send={false}>
-                            <Avatar src='/images/4.jpg' />
-                            <p>
-                                <span>
-                                    <b>Sardor Rahimxon</b>
-                                    <div>{}</div>
-                                </span>
-                                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Non accusantium repudiandae molestiae nam, sunt autem numquam qui sint obcaecati ex facilis earum dicta ipsum neque soluta, officiis aspernatur iusto molestias!
-                            </p>
-                        </CommentRow>
-                    ))
-                }
+                {loading ? <Loader /> : renderedComments}
                 <WriteComment>
                     <Avatar src={user.picture || avatarImg} alt='' />
                     <form onSubmit={handleSubmit}>
@@ -137,9 +131,7 @@ const Post = ({dropdownItems, _id, img, desc, createdAt, creater, likes, comment
                             <IconButton className='emojes-btn' size='small'>
                                 <SentimentSatisfiedAlt />
                                 <div className='emojes-list'>
-                                {
-                                    emojes.map((emoje, index) => <IconButton component="div" color='primary' key={index} size='small' onClick={() => addEmoje(emoje)}>{emoje}</IconButton>)
-                                }
+                                {renderEmojes}
                             </div>
                             </IconButton>
                             <IconButton size='small'>
@@ -157,3 +149,26 @@ const Post = ({dropdownItems, _id, img, desc, createdAt, creater, likes, comment
 }
 
 export default Post
+
+function mapComments(comments, userId) {
+
+    return comments && (comments.length ? (
+        comments.map(({_id, text, creater, createdAt}, index) => <Comment send={creater._id === userId} key={index} _id={_id} text={text} creater={creater} createdAt={createdAt} />)
+    ):<h4>No comment</h4>)
+}
+
+function mapDropdowns(items, close, _id) {
+    return items && items.map(({name, fn}, index) => (
+        <ButtonBase key={index} sx={{width: '100%', borderRadius: '5px'}} onClick={close}>
+            <DropdownItem onClick={() => fn(_id)}>
+                <h6>{name}</h6>
+            </DropdownItem>
+        </ButtonBase>
+    ))
+}
+
+function mapEmojes(addEmoje) {
+    const emojes = ['😀', '😄', '😅', '🤣','😂', '🙂', '🥰', '😍', '😘','😜','🤫','🤔','🤐','🤨','😔','🤮','🥺','😡','👿','💔','❤️','💯','🖤','🤍','🤚','🖐','👌','👈','👉','👆','🖕','👇','☝','👍','👊','👏','🤲','💪','🤝','🙅','🙅‍♀️','🐵','🐒','🐖','🐇','🦒','🐢', '🤑', '🤕', '🥶', '🙏', '🙋‍♂️', '🙋‍♀️', '🤦‍♂️']
+
+    return emojes.map((emoje, index) => <IconButton component="div" color='primary' key={index} size='small' onClick={() => addEmoje(emoje)}>{emoje}</IconButton>)
+}

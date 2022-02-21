@@ -19,10 +19,10 @@ const Navbar = ({setNavOpen}) => {
     
     const handleChange = ({target: {value}}) => {
         let matchPosts = []
-        if(posts && posts.length && value){
+        if(posts && posts.length && value && window.location.pathname === '/'){
             posts.forEach((post) => {
-                const {createrName, desc} = post
-                if(createrName.toLowerCase().includes(value.toLowerCase()) || desc.toLowerCase().includes(value.toLowerCase())){
+                const {creater, desc} = post
+                if(creater.username.toLowerCase().includes(value.toLowerCase()) || desc.toLowerCase().includes(value.toLowerCase())){
                     matchPosts.push(post)
                 }
             })  
@@ -36,8 +36,8 @@ const Navbar = ({setNavOpen}) => {
 
     useEffect(() => {
 
-        return () => dispatch(filterPost(posts))
-    }, [])
+        return () => dispatch(filterPost([]))
+    }, [dispatch])
 
     return (
         <div>
@@ -49,7 +49,7 @@ const Navbar = ({setNavOpen}) => {
                             Messanger
                         </NavLink>
                     </Typography>
-                    <Form autocomplete="off" onSubmit={e => e.preventDefault()}>
+                    <Form autoComplete="off" onSubmit={e => e.preventDefault()}>
                         <label htmlFor="search">
                             <Search className={classes.searchIcon}/>
                         </label>

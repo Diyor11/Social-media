@@ -23,7 +23,7 @@ const Grid = styled.div`
     span{
         img{
             width: 100%;
-            height: 88%;
+            height: 80%;
             object-fit: cover;
         }
         h6{

@@ -1,6 +1,7 @@
 const validUserId = require('../utils/validUserId')
 const {User, userUpdateValidater, userSignInValidater} = require('../models/User')
 const {Post} = require('../models/Post')
+const { Comment } = require('../models/Comment')
 const bcrypt = require('bcrypt')
 
 // --------------- update user ------------------
@@ -42,6 +43,7 @@ module.exports.deleteUser = async(req, res) => {
                 friends: deletedUser._id
             }
         })
+        await Comment.deleteMany({creater: deletedUser._id})
     }else{
         res.status(403).send({error: 'You can delete only your acc'})
     }
@@ -66,7 +68,7 @@ module.exports.getAllUsers = async(req, res) => {
 module.exports.getUser = async(req, res) => {
     const user = await User.findById(req.params.id).select(`-password -__v ${req.query?.picture === 'true'?'':'-profilePicture'}`)
         .populate('friends', 'profilePicture username')
-        .populate('posts', '-__v')
+        .populate({path: 'posts', select: '-__v', options: {sort: {createdAt: -1}}})
     if(!user) return res.send({error: 'this user not found'})
     res.send(user._doc)
 }

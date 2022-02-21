@@ -9,17 +9,19 @@ import Post from '../../components/post/Post'
 import { LocationOn, PriorityHigh, Favorite, AlternateEmail } from '@mui/icons-material'
 import Photos from '../../components/photos/Photos'
 import { useParams, NavLink } from 'react-router-dom'
-import { getUserById } from '../../apis/api'
-import { fetchFollow, fetchUnFollow } from '../../features/slices/userSlice'
+import { getUserById, getFollow, getUnFollow } from '../../apis/api'
 import {useDispatch, useSelector} from 'react-redux'
+import { fetchAvatar } from '../../features/slices/userSlice'
 
 const User = () => {
 
     const [navOpen, setNavOpen] = useState(false)
     const [user, setUser] = useState({username: '', profilePicture: '', email: '', info: {desc: '', city: '', from: '', relationShip: ''}, posts: [], friends: []})
     const {id} = useParams()
-    const dispatch = useDispatch()
     const myAcc = useSelector(state => state.user.user)
+    const dispatch = useDispatch()
+
+    console.log(user)
 
     const likeOrDistlike = (postId, userId) => {
         let {posts} = user
@@ -39,25 +41,29 @@ const User = () => {
         {name: 'Hide', fn: (_id) => setUser({...user, posts: user.posts.filter(post => post._id !== _id)})}
     ]
 
-    const fetchData = async() => {
-        const data = await getUserById(id, '?picture=true')
-        if(data){
-            setUser(data)
-        }
-    }
-
     const followOrUnFollow = async() => {
         if(user && user.friends.some(item => item._id === myAcc._id)){
-            dispatch(fetchUnFollow(id))
+            const data = await getUnFollow(user._id)
+            if(data && data.success)
+                setUser({...user, friends: user.friends.filter(user => user._id !== myAcc._id)})
         } else if(user){
-            dispatch(fetchFollow(id))
+            const data = await getFollow(user._id)
+            if(data && data.success)
+                setUser({...user, friends: [...user.friends, {_id: myAcc._id, username: myAcc.username, profilePicture: myAcc.picture}]})
         } else {
             console.log('Error follow')
         }
     }
 
     useEffect(() => {
+        const fetchData = async() => {
+            const data = await getUserById(id, '?picture=true')
+            if(data){
+                setUser(data)
+            }
+        }
         fetchData()
+        dispatch(fetchAvatar())
         return () => setUser({_id: '', username: '', profilePicture: '', email: '', info: {desc: '', city: '', from: '', relationShip: ''}, posts: [], friends: []})
     }, [id])
 
@@ -74,7 +80,7 @@ const User = () => {
                     </Grid>
                     <Grid item md={9} sm={8} xs={12} px={{md: '16px', sm: '8px', xs: '0'}}>
                         <Box height='100%' bgcolor='#fff'>
-                            <Avatar fn={followOrUnFollow} img={user.profilePicture} name={user.username} follow={user.friends.some(item => item._id === myAcc._id) ? 'unfollow':'follow'}   />
+                            <Avatar fn={followOrUnFollow} img={user.profilePicture} name={user.username} follow={user.friends.some(item => item._id === myAcc._id) ? 'UnFriedns':'Add Friend'}   />
                             <Grid container>
                                 <Grid item md={7} sm={12}>
                                     <Container>

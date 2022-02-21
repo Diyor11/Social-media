@@ -35,14 +35,7 @@ const Profile = () => {
         {name: 'Embed', fn: () => {}},
     ]
 
-    const fetchMyData = async() => {
-        const data = await getUserById(user._id, '')
-        if(data){
-            setMyData(data)
-        }
-    }
-
-    const addMyposts = (d) => setMyData({...myData, posts: [...myData.posts, d]})
+    const addMyposts = (d) => setMyData({...myData, posts: [d, ...myData.posts]})
 
     const likeOrDistlike = (postId, userId) => {
         let {posts} = myData
@@ -56,11 +49,17 @@ const Profile = () => {
     }
 
     useEffect(() => {
-        if(user){
-            dispatch((fetchAvatar()))
-            fetchMyData()
+        dispatch((fetchAvatar()))
+
+        const fetchMyData = async() => {
+            const data = await getUserById(user._id, '')
+            if(data){
+                setMyData(data)
+            }
         }
-    }, [dispatch])
+
+        fetchMyData()
+    }, [dispatch, user._id])
 
     return (
         <Layout>

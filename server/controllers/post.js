@@ -1,6 +1,7 @@
-const { Post,  postValidater, commentValidater } = require('../models/Post')
+const { Post,  postValidater } = require('../models/Post')
+const { Comment, commentValidater } = require('../models/Comment')
 const { User } = require('../models/User')
-// const validUserId = require('../utils/validUserId')
+const validUserId = require('../utils/validUserId')
 
 // ---------------------------------< create a post >---------------------------------=-=-=-=-=-/\/\/\>>>>
 module.exports.createPost = async(req, res) => {
@@ -73,11 +74,14 @@ module.exports.getAllPost = async(req, res) => {
     const userPosts = await Post.find({creater: currentUser._id}).sort({createdAt: -1}).select({__v: 0}).limit(10).populate('creater', 'username profilePicture')
 
     let friendPosts  = await Promise.all(currentUser.friends.map(id => {
-        Post.find({userId: id}).populate('creater', 'username profilePicture')
+         return Post.find({creater: id}).populate('creater', 'username profilePicture').sort({createdAt: -1})
     }))
-    friendPosts.filter(obb => isNaN(obb)).forEach(posts => {
+
+
+    friendPosts.filter(obb => isNaN(obb) || obb !== undefined).forEach(posts => {
         let arr = []
-        posts.forEach(post => arr.push(post))
+        if(Array.isArray(posts))
+            posts.forEach(post => arr.push(post))
         arr.sort((a, b) => a.createdAt > b.createdAt ? 1 : -1)
         friendPosts = arr
     })
@@ -96,13 +100,38 @@ module.exports.addComment = async(req, res) => {
     const {value, error} = commentValidater.validate(req.body)
 
     if(error) return res.status(400).send({error: error.details[0].message})
-    const post = await Post.findOneAndUpdate({_id: req.params.id}, {
+    if(!validUserId(value.postId)) return res.status(400).send({error: 'post id invalid'})
+    const comment = await Comment({text: value.text, postId: value.postId, creater: req.userId, createdAt: Date()}).save()
+    if(!comment) return res.send({error: 'Comment not saved'})
+
+    const post = await Post.findByIdAndUpdate(req.params.id, {
         $push: {
-            comments: {text: value.text, author: req.userId}
+            comments: comment._id
         }
-    }, {new: true})
+    }, {new: true}).select('comments')
 
     if(!post) return res.send({error: 'this posts not found'}) 
-    console.log(post)
-    res.send(post)
+    res.send(comment)
+}
+
+module.exports.deleteComment = async(req, res) => {
+    if(!req.body.postId || !validUserId(req.body.postId)) return res.status(400).send({error: 'Post id invalid'})
+    const comment = await Comment.findById(req.params.id).select('_id')
+    if(!comment) return res.status(404).send({error: 'This comment not found'})
+    const post = await Post.findByIdAndUpdate(req.body.postId, {$pull: {comments: comment._id}}, {new: true})
+    if(!post) return res.status(404).send({error: 'This post not found'})
+    await comment.deleteOne()
+    res.send(comment)
+}
+module.exports.updateComment = async(req, res) => {
+    const {error, value} = commentValidater.validate(req.body)
+    if(error) return res.send({error: error.details[0].message})
+    const comment = await Comment.findByIdAndUpdate(req.params.id, {...value}, {new: true}).select('_id text')
+    if(!comment) return res.status(404).send({error: 'Comment not found'})
+    res.send(comment)
+}
+
+module.exports.getPostComments = async(req, res) => {
+    const comments = await Comment.find({postId: req.params.id}).populate('creater', 'username profilePicture').select('-__v')
+    res.send(comments)
 }

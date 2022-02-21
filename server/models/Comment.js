@@ -3,15 +3,17 @@ const Joi = require('joi')
 
 const Comment = mongoose.model('comments', mongoose.Schema({
     text: String,
-    author: {
+    createdAt: Date,
+    postId: String,
+    creater: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users'
     }
 }))
 
 const commentValidater = Joi.object({
-    text: Joi.string().required(),
-    creater: Joi.string().min(24).max(24)
+    text: Joi.string().min(1).required(),
+    postId: Joi.string().min(24).max(24).required()
 })
 
 

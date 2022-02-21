@@ -5,21 +5,18 @@ import Sidebar from '../../components/sidebar/Sidebar'
 import { Grid, Box, Backdrop } from '@mui/material'
 import Feed from '../../components/feed/Feed'
 import Rightbar from '../../components/rightbar/Rightbar'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { fetchAllPosts } from '../../features/slices/postSlice'
 import { fetchAvatar } from '../../features/slices/userSlice'
 
 const Home = () => {
 
     const [navOpen, setNavOpen] = useState(false)
-    const user = useSelector(state => state.user.user)
     const dispatch = useDispatch()
 
     useEffect(() => {
-        if(user){
-            dispatch(fetchAllPosts())
-            dispatch(fetchAvatar())
-        }
+        dispatch(fetchAllPosts())
+        dispatch(fetchAvatar())
     }, [dispatch])
 
     return (

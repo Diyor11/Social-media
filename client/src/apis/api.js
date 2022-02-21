@@ -73,16 +73,21 @@ export const getUserById = async(_id, query) => {
 }
 
 export const getFollow = async (_id) => {
-    const {data} = await api.patch('/users/follow/' + _id).catch(e => console.log('Error'))
+    const {data} = await api.patch('/users/addfriend/' + _id).catch(e => console.log('Error'))
     return data
 }
 
 export const getUnFollow = async (_id) => {
-    const {data} = await api.patch('/users/unfollow/' + _id).catch(e => console.log('Error'))
+    const {data} = await api.patch('/users/removefriend/' + _id).catch(e => console.log('Error'))
     return data
 }
 
 export const addComment = async(userId, postId, comment) => {
     const {data} = await api.post('/posts/comment/' + postId).catch(e => console.log('Error'))
+    return data
+}
+
+export const getComments = async(_id) => {
+    const {data} = await api.get('/posts/all/comments/' + _id)
     return data
 }

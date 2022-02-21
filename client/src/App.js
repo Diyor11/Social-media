@@ -10,6 +10,7 @@ import SignIn from './pages/auth/SignIn'
 import SignUp from './pages/auth/SignUp'
 import Network from './utils/Network'
 import { useSelector } from 'react-redux'
+import ScrollToTop from './utils/ScrollToTop'
 
 const App = () => {
 
@@ -25,6 +26,7 @@ const App = () => {
         <>
           <ThemeProvider theme={theme} >
               <GlobalStyles />
+              <ScrollToTop />
                 <Network />
                 {
                     user ? (

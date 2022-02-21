@@ -128,29 +128,6 @@ export const CommnetArea = styled.div`
     }
 `
 
-export const CommentRow = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: ${({send}) => (send ? 'flex-end':'flex-start')};
-    margin-top: 8px;
-
-    p{
-        span{
-            display: flex;
-            padding-bottom: 4px;
-        }
-        display: flex;
-        flex-direction: column;
-        margin-left: 5px;
-        background-color: ${({send}) => (send ? '#8ab2ff':'#c4c4c4')};
-        border-radius: 11px;
-        max-width: 70%;
-        font-family: sans-serif;
-        font-size: 12px;
-        padding: 7px;
-    }
-`
-
 export const WriteComment = styled.div`
     margin-top: 15px;
     display: flex;
