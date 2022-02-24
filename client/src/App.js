@@ -11,6 +11,7 @@ import SignUp from './pages/auth/SignUp'
 import Network from './utils/Network'
 import { useSelector } from 'react-redux'
 import ScrollToTop from './utils/ScrollToTop'
+import Messanger from './pages/messanger/Messanger'
 
 const App = () => {
 
@@ -34,6 +35,7 @@ const App = () => {
                             <Route path='/' element={<Home />} />
                             <Route path='/user/:id' element={<User />} />
                             <Route path='/profile' element={<Profile />} />
+                            <Route path='/messanger' element={<Messanger />} />
                             <Route path='*' element={<Error />} />
                         </Routes>
                     ):(

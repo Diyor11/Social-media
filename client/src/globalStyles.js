@@ -27,7 +27,7 @@ export const Layout = styled.div`
     height: 100vh;
 
     @media(max-width: 600px){
-        grid-template-rows: 56px 1fr;
+        grid-template-rows: ${({fullHeight}) => fullHeight ? '1fr':'56px 1fr'};
     }
 `
 
