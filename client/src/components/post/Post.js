@@ -173,8 +173,8 @@ const Post = ({dropdownItems, _id, img, desc, createdAt, creater, likes, likeOrD
                             <IconButton className='emojes-btn' size='small'>
                                 <SentimentSatisfiedAlt />
                                 <div className='emojes-list'>
-                                {renderEmojes}
-                            </div>
+                                    {renderEmojes}
+                                </div>
                             </IconButton>
                             <IconButton size='small'>
                                 <CameraAlt />

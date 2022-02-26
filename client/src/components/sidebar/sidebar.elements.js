@@ -77,7 +77,7 @@ export const items = [
     {
         text: 'Chats',
         Icon: ChatIcon,
-        link: '/',
+        link: '/messanger',
         iconColor: '#379BE9'
     },
     {

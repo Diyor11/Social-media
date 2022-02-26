@@ -103,13 +103,16 @@ export const DropdownItem = styled.li`
     display: flex;
     align-items: center;
     color: ${({error}) => (error ? '#d32f2f !important':'#111')};
-    
     cursor: pointer;
-    h6{
-        font-family: sans-serif;
-        font-size: 18px;
-        margin-left: 7px;
-        font-weight: 500
+    .css-10d1a0h-MuiButtonBase-root{
+        justify-content: flex-start;
+
+        h6{
+            font-family: sans-serif;
+            font-size: 18px;
+            margin-left: 7px;
+            font-weight: 500
+        }
     }
 `
 

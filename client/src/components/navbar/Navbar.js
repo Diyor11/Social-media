@@ -74,9 +74,11 @@ const Navbar = ({setNavOpen}) => {
                                 </Dropdown>
                             </IconButton>
                         </ClickAwayListener>
-                        <IconBtn>
-                            <Message className={classes.icons} />
-                        </IconBtn>
+                        <NavLink to='/messanger'>
+                            <IconBtn>
+                                <Message className={classes.icons} />
+                            </IconBtn>
+                        </NavLink>
                         <IconBtn>
                             <NavLink to='/profile'>
                                 <Person className={classes.icons} />
@@ -89,7 +91,7 @@ const Navbar = ({setNavOpen}) => {
                                     <DropdownItems>
                                         <NavLink to='/profile'>
                                             <DropdownItem>
-                                                <ButtonBase className={classes.buttonBase}>
+                                                <ButtonBase className={classes.buttonBase} >
                                                     <AccountCircle />
                                                     <h6>Profile</h6>
                                                 </ButtonBase>
