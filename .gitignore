@@ -4,3 +4,6 @@ client/package-lock.json
 server/node_modules/
 server/.env
 server/package-lock.json
+
+socket/node_modules/
+socket/package-lock.json
