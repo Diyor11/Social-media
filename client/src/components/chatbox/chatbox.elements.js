@@ -36,6 +36,9 @@ export const TopBar = styled.div`
         color: #fff;
         font-family: sans-serif;
         opacity: ${({user}) => user ? 1:0};
+        .name{
+            text-transform: capitalize;
+        }
 
         .time{
             font-size: 14px;
@@ -129,23 +132,23 @@ export const MessageRow = styled.div`
     margin-top: 14px;
 `
 export const Msg = styled.div`
-    color: #fff;
-
     .text{
-        background-color: ${({own}) => own ? '#2075ED':'#EBEBEB'};
+        background-color: ${({own}) => own ? '#2075ED':'#D0CDCD'};
         padding: 8px;
         border-radius: 18px;
         user-select: auto;
         font-family: cursive;
+        color: ${({own}) => own ? '#fff': '#2E2E2E'};
         &::selection{
             background: #27bf5a;
             color: #fff;
         } 
     }
     .time{
+        color: #fff;
         text-align: end;
         margin: 7px;
         font-family: sans-serif;
-        font-size: 14px;
+        font-size: 13px;
     }
 `

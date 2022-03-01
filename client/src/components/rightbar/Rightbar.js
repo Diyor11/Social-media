@@ -1,28 +1,24 @@
-import React, {useEffect, useState, useMemo} from 'react'
+import React, {useEffect, useMemo} from 'react'
 import { RightbarCom, useStyles } from './rightbar.elements'
 import { Typography, List, ListItem, ListItemAvatar, Avatar } from '@mui/material'
 import img from '../../assets/ad.png'
 import defaultImg from '../../assets/avatar'
 import { NavLink } from 'react-router-dom'
-import { suggistion } from '../../apis/api'
-import {useSelector} from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux'
+import { fetchAllUsers } from '../../features/slices/usersSlice'
 
 const Rightbar = () => {
 
     const classes = useStyles()
-    const [users, setUsers] = useState([])
+    const dispatch = useDispatch()
 
     const user = useSelector(state => state.user.user)
+    const users = useSelector(state => state.users.users)
     const renderUsers = useMemo(() => mapUsers(users, user._id, classes), [users, user._id, classes])
 
     useEffect(() => {
-        const fetchUsers = async() => {
-            const data = await suggistion()
-            if(data)
-                setUsers(data)
-        }
-        fetchUsers()
-    },[])
+        dispatch(fetchAllUsers())
+    },[dispatch])
 
     return (
         <RightbarCom>

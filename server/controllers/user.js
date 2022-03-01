@@ -1,7 +1,7 @@
-const validUserId = require('../utils/validUserId')
 const {User, userUpdateValidater, userSignInValidater} = require('../models/User')
 const {Post} = require('../models/Post')
 const { Comment } = require('../models/Comment')
+const { Message } = require('../models/Message')
 const bcrypt = require('bcrypt')
 
 // --------------- update user ------------------
@@ -44,6 +44,7 @@ module.exports.deleteUser = async(req, res) => {
             }
         })
         await Comment.deleteMany({creater: deletedUser._id})
+        await Message.deleteMany({$or: [{sender: deletedUser._id}, {reciver: deletedUser._id}]})
     }else{
         res.status(403).send({error: 'You can delete only your acc'})
     }

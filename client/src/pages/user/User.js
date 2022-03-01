@@ -21,8 +21,6 @@ const User = () => {
     const myAcc = useSelector(state => state.user.user)
     const dispatch = useDispatch()
 
-    console.log(user)
-
     const likeOrDistlike = (postId, userId) => {
         let {posts} = user
         const postIndex = posts.findIndex(post => post._id === postId)
@@ -80,7 +78,7 @@ const User = () => {
                     </Grid>
                     <Grid item md={9} sm={8} xs={12} px={{md: '16px', sm: '8px', xs: '0'}}>
                         <Box height='100%' bgcolor='#fff'>
-                            <Avatar fn={followOrUnFollow} img={user.profilePicture} name={user.username} follow={user.friends.some(item => item._id === myAcc._id) ? 'UnFriedns':'Add Friend'}   />
+                            <Avatar fn={followOrUnFollow} img={user.profilePicture} name={user.username} follow={user.friends.some(item => item._id === myAcc._id) ? 'UnFriedns':'Add Friend'} id={id}   />
                             <Grid container>
                                 <Grid item md={7} sm={12}>
                                     <Container>

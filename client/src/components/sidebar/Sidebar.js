@@ -1,26 +1,14 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { SidebarCom, items, StyledBadge, useStyles, CloseBtn } from './sidebar.elements'
 import { List, ListItem, ListItemButton, ListItemIcon, Typography, Button, Divider, Avatar } from '@mui/material'
 import { NavLink } from 'react-router-dom'
 import { Close } from '@mui/icons-material'
+import socket from '../../utils/socket'
+import { useSelector, useDispatch } from 'react-redux'
+import { getOnlines, addOnline, removeOnline } from '../../features/slices/usersSlice'
+import defaultImg from '../../assets/avatar'
 
 const Sidebar = ({navOpen, setNavOpen}) => {
-
-    
-    const users = [
-        {
-            name: 'Jhon Conor',
-            img: '/images/1.jpg'
-        },
-        {
-            name: 'Emma Watson',
-            img: '/images/2.jpg'
-        },
-        {
-            name: 'Sunny Leoni',
-            img: '/images/3.jpg'
-        }
-    ]
 
     const classes = useStyles()
 
@@ -48,24 +36,54 @@ const Sidebar = ({navOpen, setNavOpen}) => {
             </List>
             <Divider />
             <List>
-                {
-                    users.length && users.map((item, index) => (
-                        <ListItem key={index} className={classes.listItem}>
-                            <StyledBadge
-                                delay={index * 0.4}
-                                overlap="circular"
-                                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                                variant="dot"
-                            >
-                                <Avatar alt={item.name} src={item.img} />
-                            </StyledBadge>
-                            <Typography className={classes.avatarName} variant='h6'>{item.name}</Typography>
-                        </ListItem>
-                    ))
-                }                
+                <Onlines />               
             </List>
         </SidebarCom>
     )
 }
 
 export default Sidebar
+
+function Onlines() {
+
+    const classes = useStyles()
+    const {users, onlines} = useSelector(state => state.users)
+    const {user} = useSelector(state => state.user)
+    const dispatch = useDispatch()
+
+    console.log(onlines)
+
+    useEffect(() => {
+        socket.on('allUsers', (users) => {
+            dispatch(getOnlines(users))
+        })
+        socket.emit('addUser', user._id)
+
+        socket.on('newUser', user => {
+            dispatch(addOnline(user))
+        })
+
+        socket.on('removeUser', id => {
+            dispatch(removeOnline(id))
+        })
+    }, [user._id, dispatch])
+    
+    return onlines && users && 
+        users.filter(e => onlines.some(i => i.userId === e._id)).map(({profilePicture, username, _id}, index) => (
+
+                <ListItem key={index} className={classes.listItem}>
+                    <StyledBadge
+                        delay={index * 0.4}
+                        overlap="circular"
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                        variant="dot"
+                    >
+                        <Avatar alt={username} src={profilePicture || defaultImg} />
+                    </StyledBadge>
+                    <NavLink to={`/user/${_id}`}>
+                        <Typography className={classes.avatarName} variant='h6'>{username}</Typography>
+                    </NavLink>
+                </ListItem>
+        )
+    )
+}

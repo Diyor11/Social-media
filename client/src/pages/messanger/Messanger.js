@@ -9,6 +9,7 @@ import Chatbox from '../../components/chatbox/Chatbox'
 const Messanger = () => {
 
     const [showSide, setShowSide] = useState(false)
+    const [onlines, setOnlines] = useState([])        
 
     return (
         <Layout fullHeight>
@@ -19,10 +20,10 @@ const Messanger = () => {
             <LayoutMain>
                 <Grid container>
                     <Grid item md={3} sm={3} xs={0} >
-                        <FriendsSide showSide={showSide} setShowSide={setShowSide} />
+                        <FriendsSide showSide={showSide} setShowSide={setShowSide} onlines={onlines} />
                     </Grid>
-                    <Grid item md={9} sm={9} xs={12} >
-                        <Chatbox setShowSide={setShowSide} />
+                    <Grid item md={9} sm={9} xs={12}  >
+                        <Chatbox setShowSide={setShowSide} setOnlines={setOnlines} />
                     </Grid>
                 </Grid>
             </LayoutMain>

@@ -1,7 +1,6 @@
 const { Post,  postValidater } = require('../models/Post')
 const { Comment, commentValidater } = require('../models/Comment')
 const { User } = require('../models/User')
-const validUserId = require('../utils/validUserId')
 
 // ---------------------------------< create a post >---------------------------------=-=-=-=-=-/\/\/\>>>>
 module.exports.createPost = async(req, res) => {
@@ -59,13 +58,6 @@ module.exports.likePost = async(req, res) => {
         res.send({success: 'Post success liked'})
     }
 }
-// --------------------------------- get a post by id ---------------------------------
-// module.exports.getPost = async(req, res) => {
-//     const post = await Post.findById(req.params.id).select({__v: 0})
-
-//     if(!post) return res.send({error: 'Post not found'})
-//     res.send(post)
-// }
 // --------------------------------- get all posts ---------------------------------
 module.exports.getAllPost = async(req, res) => {
     const currentUser = await User.findById(req.userId)
@@ -86,59 +78,4 @@ module.exports.getAllPost = async(req, res) => {
         friendPosts = arr
     })
     res.send(userPosts.concat(friendPosts))
-}
-// --------------------------------- get my posts ---------------------------------
-// module.exports.getUserPosts = async(req, res) => {
-//     const currentUser = await User.findById(req.params.id)
-//     if(!currentUser) return res.send({error: 'User not found'})
-
-//     const userPosts = await Post.find({creater: currentUser._id}).sort({createdAt: -1}).populate('creater', 'username profilePicture').select('-password')
-//     res.send(userPosts)
-// }
-
-module.exports.addComment = async(req, res) => {
-    const {value, error} = commentValidater.validate(req.body)
-
-    if(error) return res.status(400).send({error: error.details[0].message})
-    const comment = await Comment({text: value.text, postId: req.params.id, creater: req.userId, createdAt: Date()}).save()
-    if(!comment) return res.send({error: 'Comment not saved'})
-
-    const post = await Post.findByIdAndUpdate(req.params.id, {
-        $push: {
-            comments: comment._id
-        }
-    }, {new: true}).select('comments')
-
-    if(!post) return res.send({error: 'this posts not found'}) 
-    res.send(comment)
-}
-
-module.exports.deleteComment = async(req, res) => {
-    const comment = await Comment.findById(req.params.id).select('postId creater')
-    if(!comment) return res.status(404).send({error: 'This comment not found'})
-    const post = await Post.findByIdAndUpdate(comment.postId, {$pull: {comments: comment._id}}, {new: true})
-    if(comment.creater == req.userId){
-        if(!post) return res.status(404).send({error: 'This post not found'})
-        await comment.deleteOne()
-        res.send(comment)
-    } else {
-        res.status(403).send({error: 'You can delete only your own comments'})
-    }
-}
-module.exports.updateComment = async(req, res) => {
-    const {error, value} = commentValidater.validate(req.body)
-    if(error) return res.send({error: error.details[0].message})
-    const comment = await Comment.findById(req.params.id).select('creater')
-    if(!comment) return res.status(404).send({error: 'Comment not found'})
-    if(req.userId == comment.creater){
-        await comment.updateOne(value)  
-        res.send({...comment._doc, text: value.text})
-    }  else {
-        res.status(403).send({error: 'You can update only your own comment'})
-    }
-}
-
-module.exports.getPostComments = async(req, res) => {
-    const comments = await Comment.find({postId: req.params.id}).populate('creater', 'username profilePicture').select('-__v')
-    res.send(comments)
 }

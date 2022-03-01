@@ -101,3 +101,13 @@ export const editComment = async(commentId, text) => {
     const {data} = await api.put('/posts/comment/' + commentId, {text}).catch(e => console.log('Error adit comment'))
     return data
 } 
+
+export const getMessages = async(reciverId) => {
+    const {data} = await api.get('/message/' + reciverId).catch(e => console.log('Error get messages'))
+    return data
+}
+
+export const sendMessage = async(msg) => {
+    const {data} = await api.post('/message/add', msg).catch(e => console.log('Error send message'))
+    return data
+}

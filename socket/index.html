@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>hello <div id="id"></div></h1>
+    <input type="text" id="text" />
+    <button id="btn">Click</button>
+    <script>
+        const id = Date.now() / 1000000
+        document.getElementById('id').innerHTML = id
+        const text = document.getElementById('text')
+        const btn = document.getElementById('id')
+        const socket = io()
+        
+        
+        socket.on('allUsers', users => console.log(users))
+        socket.emit('addUser', id)
+        socket.on('newUser', user => console.log(user))
+        socket.on('removeUser', id => console.log(id))
+        socket.on('reciveMessage', d => console.log(d))
+
+        btn.addEventListener('click', () => console.log('cli'))
+        
+    </script>
+</body>
+</html>

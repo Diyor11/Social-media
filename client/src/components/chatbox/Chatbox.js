@@ -1,48 +1,86 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react'
+import React, { useState, useMemo, useEffect, useRef, memo } from 'react'
 import {Container, TopBar, Chat, Bottom, Form} from './chatbox.elements'
 import {ArrowBack, AttachFile, SentimentSatisfiedAlt, Send} from '@mui/icons-material'
 import { IconButton, Avatar } from '@mui/material'
-import image from '../../assets/1.jpg'
-import Message from './Message'
+import Messages from './Messages'
 import emojes from '../../assets/emojes'
-import { HTML5_FMT } from 'moment'
+import { useParams } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import avatarImg from '../../assets/avatar'
+import { getMessages, sendMessage } from '../../apis/api'
+import socket from '../../utils/socket'
 
-const Chatbox = ({setShowSide}) => {
+const Chatbox = ({setShowSide, setOnlines}) => {
   
   const [messages, setMessages] = useState([])
-  const renderMessages = useMemo(() => mapMessages(messages), [messages])
   const addEmoje = (emoje) => text.current.value = `${text.current.value}${emoje}`
   const renderEmojes = useMemo(() => mapEmojes(addEmoje), [])
-  const [selectedUser, setSelectedUser] = useState({})
-  const scroll = useRef()
+  const {id} = useParams()
+  const { users } = useSelector(state => state.users)
+  const [selected, setSelected] = useState({})
   
   const text = useRef()
+  const scroll = useRef()
+
+
+  const saveMessage = async(d) => {
+    const data = await sendMessage(d)
+    if(data){
+      setMessages([...messages, data])
+      socket.emit('sendMessage', data)
+    }
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
     if(!text.current.value.trim()) return null 
-    setMessages([...messages, {message: text.current.value.trim().replace(/fuck/ig, '****')}])
+    saveMessage({text: text.current.value.trim(), reciver: selected._id})
     text.current.value = ''
   }
 
   useEffect(() => {
-    scroll.current.scrollTop = scroll.current.scrollHeight
+      const getMsgs = async (id) => {
+        const data = await getMessages(id)
+        if(data)
+          setMessages(data)
+      }
+
+      const user = users.find(c => c._id === id)
+      if(user){
+        setSelected(user)
+        getMsgs(user._id)
+      }
+
+  }, [id, users])
+
+  useEffect(() => {
+    socket.on('reciveMessage', msg => {
+      if(msg.sender === id){
+        setMessages([...messages, msg])
+      }
+    })
+  }, [id, messages])
+
+  useEffect(() => {
+    scroll.current?.scrollIntoView({behavior: 'smooth'})
+    console.log(scroll)
   }, [messages])
 
   return (
     <Container>
-      <TopBar user={setSelectedUser?._id} >
+      <TopBar user={selected?._id} >
         <IconButton className='back-icon' onClick={() => setShowSide(true)}>
           <ArrowBack />
         </IconButton>
-          <Avatar src={image} alt='' className='avatar' />
+          <Avatar src={selected.profilePicture || avatarImg} alt='' className='avatar' />
           <div className="info">
-            <h4 className="name">{'Conor McGregor'}</h4>
-            <div className="time">{'1 hour ago'}</div>
+            <h4 className="name">{selected?.username}</h4>
+            <div className="time">last seen recently</div>
           </div>
       </TopBar>
-      <Chat ref={scroll}>
-        { messages && (messages.length ? renderMessages: <h4 className='no-msg'>Please select user</h4>)}
+      <Chat>
+        { selected?._id ? (messages ? <Messages messages={messages} />: <h4 className='no-msg'>No messages</h4>): <h4 className='no-msg'>Please select user</h4>}
+        <div ref={scroll}></div>
       </Chat>
       <Bottom>
         <Form onSubmit={handleSubmit}>
@@ -65,12 +103,12 @@ const Chatbox = ({setShowSide}) => {
   )
 }
 
-export default Chatbox
+export default memo(Chatbox)
 
-function mapMessages(messages) {
+// function MapMessages(messages, scroll) {
 
-  return messages.map(({message}, key) => <Message key={key} message={message} own />)
-}
+//   return messages.map(({text, createdAt, reciver}, key) => <Message ref={scroll} key={key} message={text} time={createdAt} reciver={reciver} />)
+// }
 
 function mapEmojes(addEmoje) {
 

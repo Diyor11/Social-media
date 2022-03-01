@@ -36,6 +36,7 @@ const App = () => {
                             <Route path='/user/:id' element={<User />} />
                             <Route path='/profile' element={<Profile />} />
                             <Route path='/messanger' element={<Messanger />} />
+                            <Route path='/messanger/:id' element={<Messanger />} />
                             <Route path='*' element={<Error />} />
                         </Routes>
                     ):(

@@ -54,28 +54,22 @@ export const Users = styled.div`
         display: flex;
         align-items: center;
         margin-top: 15px;
+        .MuiButtonBase-root{
+            width: 100%;
+        }
         h6{
             font-size: 15px;
             color: #fff;
             font-family: 'Lato', sans-serif;
             margin-left: 7px;
+            text-transform: capitalize;
         }
     }
     .user.online{
-        
         .MuiAvatar-root{
             position: relative;
             border: 1.8px solid #00e700;
-
-            &:after{
-                position: absolute;
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
-                background-color: red;
-            }
         }
-
     }
 `
 
