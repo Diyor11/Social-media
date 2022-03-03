@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-    baseURL: "http://localhost:5000/api",
+    baseURL: "https://enigmatic-shelf-58869.herokuapp.com/api",
     headers: {
         authorization: `Bearer ${JSON.parse(localStorage.getItem('profile-data'))?.token}`
     }

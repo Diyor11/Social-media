@@ -1,12 +1,14 @@
 {
-  "name": "socket",
+  "name": "chat",
   "version": "1.0.0",
-  "description": "",
+  "description": "chat",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
-  "keywords": [],
+  "engines": {
+    "node": "16.14.0"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {

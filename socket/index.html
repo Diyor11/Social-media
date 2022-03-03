@@ -5,28 +5,49 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
 </head>
+<script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
 <body>
-    <h1>hello <div id="id"></div></h1>
-    <input type="text" id="text" />
-    <button id="btn">Click</button>
+    <h2 id="id"></h2>
+    <form id="form" autocomplete="off">
+        <input type="text" id="input">
+    </form>
+    <ul id="ul"></ul>
     <script>
-        const id = Date.now() / 1000000
-        document.getElementById('id').innerHTML = id
-        const text = document.getElementById('text')
-        const btn = document.getElementById('id')
-        const socket = io()
-        
-        
-        socket.on('allUsers', users => console.log(users))
-        socket.emit('addUser', id)
-        socket.on('newUser', user => console.log(user))
-        socket.on('removeUser', id => console.log(id))
-        socket.on('reciveMessage', d => console.log(d))
+        const form = document.getElementById('form')
+        const input = document.getElementById('input')
+        const ul = document.getElementById('ul')
+        const ID = document.getElementById('id')
 
-        btn.addEventListener('click', () => console.log('cli'))
-        
+        const socket = io('https://stormy-atoll-90492.herokuapp.com/')
+        let messages = []
+
+        console.log(socket)
+
+        const render = (d => {
+            d.forEach(sms => {
+                ul.innerHTML += `<li>${sms}</li>`
+            })
+        })
+
+        socket.on('start', m => {
+            render(m)
+        })
+        socket.on('recive', text => {
+            messages.push(text)
+            ul.innerHTML += `<li>${text}</li>`
+        })
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault()
+
+            const text = input.value
+
+            messages.push(text)
+            ul.innerHTML += `<li>${text}</li>`
+            socket.emit('sendMessage', text)
+            input.value = ''
+        })
     </script>
 </body>
 </html>
