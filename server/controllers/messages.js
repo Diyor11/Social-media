@@ -11,16 +11,16 @@ module.exports.addMessage = async(req, res) => {
 
     const users = await User.find({$or: [{_id: req.userId}, {_id: value.reciver}]}).select('_id')
 
-    console.log(users)
-
     if(users.length !== 2) return res.status(404).send({error: 'Sender or reciver not found'}) 
 
     const msg = await Message({...value, sender: req.userId, createdAt: Date.now()}).save()
     
     if(msg)
         res.status(201).send(msg)
-    else
+    else{
+        console.log('Error message not saved')
         res.status(500).send({error: 'message not saved'})
+    }
 }
 // ----------------- > Conversetion messages ---------------- -- -- ---
 module.exports.messages = async(req, res) => {
@@ -41,8 +41,5 @@ module.exports.messages = async(req, res) => {
         }
     ]}).sort({createdAt: 1})
 
-    if(messages)
-        res.send(messages)
-    else
-        res.status(400).send({error: 'Messages error'})
+    res.send(messages)
 }

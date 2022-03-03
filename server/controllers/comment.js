@@ -7,7 +7,10 @@ module.exports.addComment = async(req, res) => {
 
     if(error) return res.status(400).send({error: error.details[0].message})
     const comment = await Comment({text: value.text, postId: req.params.id, creater: req.userId, createdAt: Date()}).save()
-    if(!comment) return res.send({error: 'Comment not saved'})
+    if(!comment) {
+        console.log('Error saving comment')
+        return res.status(500).send({error: 'Comment not saved'})
+    }
 
     const post = await Post.findByIdAndUpdate(req.params.id, {
         $push: {
@@ -22,10 +25,10 @@ module.exports.addComment = async(req, res) => {
 module.exports.deleteComment = async(req, res) => {
     const comment = await Comment.findById(req.params.id).select('postId creater')
     if(!comment) return res.status(404).send({error: 'This comment not found'})
-    const post = await Post.findByIdAndUpdate(comment.postId, {$pull: {comments: comment._id}}, {new: true})
     if(comment.creater == req.userId){
+        const post = await Post.findByIdAndUpdate(comment.postId, {$pull: {comments: comment._id}}, {new: true})
         if(!post) return res.status(404).send({error: 'This post not found'})
-        await comment.deleteOne()
+        await comment.deleteOne().catch(e => console.log('Error deleting comment'))
         res.send(comment)
     } else {
         res.status(403).send({error: 'You can delete only your own comments'})

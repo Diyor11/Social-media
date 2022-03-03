@@ -157,6 +157,54 @@ export const ErrMessage = styled.div`
     max-width: 300px;
 `
 
-export const Form2 = styled(Form)`
+export const Form2 = styled(Form)``
 
+export const Container = styled.div`
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
 `
+
+export const Box = styled.div`
+    background-color: #fff;
+    width: 575px;
+    box-sizing: border-box;
+    padding: 30px;
+    text-align: center;
+    border-radius: 7px;
+    font-family: sans-serif;
+
+    .comment{
+        margin-top: 35px;
+        color: #3F3F3F;
+    }
+    .email{
+        margin-top: 30px;
+    }
+    .noEmail{
+        margin-top: 30px;
+        color: #333;
+    }
+    #btn{
+        border: none;
+        margin-top: 15px;
+        background-color: #33B140;
+        padding: 10px 17px;
+        font-size: 15px;
+        border-radius: 5px;
+        color: #fff;
+        font-weight: 550;
+        cursor: pointer;
+    }
+    .contact{
+        margin-top: 15px;
+        font-size: 17px;
+
+        a{
+            color: blue;
+            text-decoration: underline;
+        }
+    }
+`  

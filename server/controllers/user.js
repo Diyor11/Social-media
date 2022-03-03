@@ -14,9 +14,7 @@ module.exports.updateUser = async(req, res) => {
     if(!currentUser) return res.send({error: 'User not found'})
         
     if(req.params.id === req.userId){
-        if(value.password)
-            value.password = await bcrypt.hash(value.password, 10)
-            const updatedUser = await currentUser.set({profilePicture: value.profilePicture, info: {...currentUser.info, ...value.info}}).save()
+        const updatedUser = await currentUser.set({profilePicture: value.profilePicture, info: {...currentUser.info, ...value.info}}).save()
         if(!updatedUser) return res.send({error: 'User not found'})
         const {password, friends, posts, ...filterdUser} = updatedUser._doc
         res.send(filterdUser)
@@ -90,7 +88,7 @@ module.exports.addFriend = async(req, res) => {
             return res.send({error: 'You already have this friend'})
         }
     } else {
-        return res.send({error: 'You cant add friend yourself'})
+        return res.send({error: 'You can\'t add friend yourself'})
     }
 }
 // --------------- unfollow a user --------->
@@ -98,16 +96,15 @@ module.exports.removeFriend = async(req, res) => {
     const user = await User.findById(req.params.id).select('friends')
     const currentUser = await User.findById(req.userId).select('friends')
 
-    if(!currentUser) return res.send({error: 'your userid not found ' + req.userId})
+    if(!user) return res.send({error: 'this user not found ' + req.params.id})
+    if(!currentUser) return res.send({error: 'your acc not found ' + req.userId})
 
-    if(user && user.friends.includes(req.userId)){
+    if(user.friends.includes(req.userId)){
         await user.updateOne({$pull: {friends: req.userId}})
         await currentUser.updateOne({$pull: {friends: req.params.id}})
-        return res.send({success: 'This user succes deleed friends', _id: user._id})
-    } else if(user){
-        return res.send({error: 'You did\'n follow this user'})
+        return res.send({success: 'This user succes deleted friends', _id: user._id})
     } else {
-        return res.send({success: 'This acc not found'})
+        return res.send({error: 'You did\'n follow this user'})
     }
 }
 // --------------- get user avatar image --------->

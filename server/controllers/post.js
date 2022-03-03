@@ -1,5 +1,4 @@
 const { Post,  postValidater } = require('../models/Post')
-const { Comment, commentValidater } = require('../models/Comment')
 const { User } = require('../models/User')
 
 // ---------------------------------< create a post >---------------------------------=-=-=-=-=-/\/\/\>>>>
@@ -11,9 +10,15 @@ module.exports.createPost = async(req, res) => {
 
     if(!exitUser) return res.status(400).send({error: 'this user not found ' + req.userId})
 
-    const createdPost = await new Post({...value, creater: req.userId, createdAt: Date()}).save()
-    res.send(createdPost)
-    await User.updateOne({_id: req.userId}, {$push: {posts: createdPost._id}}, {new: true})
+    const createdPost = await new Post({...value, creater: req.userId, createdAt: Date()}).save().catch(e => console.log('Error saving post'))
+    if(createdPost){
+        res.send(createdPost)
+        await User.updateOne({_id: req.userId}, {$push: {posts: createdPost._id}}, {new: true})
+    } else {
+        console.log('Error saving post')
+        res.status(500).send({error: 'Error saving post'})
+    }
+
 }
 // --------------------------------- update a post ---------------------------------
 module.exports.updatePost = async(req, res) => {
@@ -37,7 +42,7 @@ module.exports.deletePost = async(req, res) => {
     const post = await Post.findById(req.params.id)
     if(!post) return res.send({error: 'This post not found'})
     if(post.creater == req.userId){
-        await post.deleteOne()
+        await post.deleteOne().catch(() => console.log('Error deleting post'))
         res.send({success: 'post succes deleted', _id: post._id})
         await User.updateOne({_id: req.userId}, {$pull: {posts: post._id}}, {new: true})
     } else {
@@ -77,5 +82,9 @@ module.exports.getAllPost = async(req, res) => {
         arr.sort((a, b) => a.createdAt > b.createdAt ? 1 : -1)
         friendPosts = arr
     })
-    res.send(userPosts.concat(friendPosts))
+    if(friendPosts){
+        res.send(userPosts.concat(friendPosts))
+    } else {
+        res.send(userPosts)
+    }
 }

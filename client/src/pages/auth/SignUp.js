@@ -7,6 +7,7 @@ import {ButtonBase} from '@mui/material'
 import { signUp } from '../../apis/api'
 import { useNavigate } from 'react-router-dom'
 import Loader from '../../components/loader/Loader'
+import { GoogleLogin } from 'react-google-login'
 
 const SignUp = () => {
 
@@ -21,6 +22,8 @@ const SignUp = () => {
     const confirmPasswordRef = useRef(null)
     const countryRef = useRef(null)
     const cityRef  = useRef(null)
+
+    const clientId = '1016779241269-raj61dtgo42rl8pvhorke1tuknrts7g5.apps.googleusercontent.com'
 
     const navigate = useNavigate()
 
@@ -37,9 +40,22 @@ const SignUp = () => {
         }
         else if(data.error){
             setErrMsg(data.error)
+        // } else if(data.code === 0) {
+        //     navigate('/verify/verify/' + userData.email)
+        // } else if(data.code === 1) {
+        //     navigate('/verify/exist/' + userData.email)
         } else {
             navigate('/')
         }
+    }
+
+    const googleFail = (e) => {
+        console.log(e)
+    }
+    
+    const googleSuccessIn = async (res) => {
+        const {email, googleId, name} = res?.profileObj
+        fetchData({username: name, email, password: googleId, info: {city: 'Tashkent', from: 'Uzbekistan'}})
     }
 
     const handleSubmit = e => {
@@ -110,9 +126,18 @@ const SignUp = () => {
                     <button className='login'>{loading ? <Loader /> : 'Sign up'}</button>
                 </ButtonBase>
                 <ButtonBase component='div'>
-                    <button className='google-btn'>
-                        <img alt='Google' src={gImg} /><span>Sign up with Google</span>
-                    </button>
+                    <GoogleLogin 
+                        clientId={clientId}
+                        render={(props) => (
+                            <button className='google-btn' onClick={props.onClick}>
+                                <img alt='Google' src={gImg} /><span>Sign up with Google</span>
+                            </button>
+                        )} 
+                        onSuccess={googleSuccessIn}
+                        onFailure={googleFail}   
+                        cookiePolicy={'single_host_origin'}
+                    />
+                    
                 </ButtonBase>
                 <div className="under-text">
                     <h5>Do you have already account? </h5>

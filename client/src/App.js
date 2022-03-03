@@ -12,6 +12,8 @@ import Network from './utils/Network'
 import { useSelector } from 'react-redux'
 import ScrollToTop from './utils/ScrollToTop'
 import Messanger from './pages/messanger/Messanger'
+import Verify from './pages/auth/Verify'
+import Exist from './pages/auth/Exist'
 
 const App = () => {
 
@@ -42,6 +44,8 @@ const App = () => {
                     ):(
                         <Routes>
                             <Route path='/login/signup' element={<SignUp />} />
+                            <Route path='/verify/verify/:email' element={<Verify />} />
+                            <Route path='/verify/exist/:email' element={<Exist />} />
                             <Route path='*' element={<SignIn />} />
                         </Routes>
                     )

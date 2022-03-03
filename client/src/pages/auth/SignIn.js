@@ -8,6 +8,7 @@ import { signIn } from '../../apis/api'
 import { useDispatch } from 'react-redux';
 import { logIn } from '../../features/slices/userSlice';
 import Loader from '../../components/loader/Loader'
+import { GoogleLogin } from 'react-google-login'
 
 const SignIn = () => {
 
@@ -20,6 +21,8 @@ const SignIn = () => {
     const emailRef = useRef(null)
     const passwordRef = useRef(null)
     const rememberRef = useRef(null)
+
+    const clientId = '1016779241269-raj61dtgo42rl8pvhorke1tuknrts7g5.apps.googleusercontent.com'
 
     const dispatch = useDispatch()
 
@@ -37,6 +40,16 @@ const SignIn = () => {
             dispatch(logIn(data))
         }
     }
+
+    const googleFail = (e) => {
+        console.log(e)
+    }
+    
+    const googleSuccessIn = async (res) => {
+        const {email, googleId} = res?.profileObj
+        fatchData({email, password: googleId})
+    }
+
     
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -96,9 +109,18 @@ const SignIn = () => {
                     <button className='login' style={{background: loading && '#6593ed'}} > {loading ? <Loader />: 'Login'} </button>
                 </ButtonBase>
                 <ButtonBase component='div'>
-                    <button className='google-btn' >
-                        <img alt='' src={gImg} /><span>Sign in with Google</span>
-                    </button>
+                    <GoogleLogin 
+                        clientId={clientId}
+                        render={(props) => (
+                            <button className='google-btn' onClick={props.onClick}>
+                                <img alt='' src={gImg} /><span>Sign in with Google</span>
+                            </button>
+                        )} 
+                        onSuccess={googleSuccessIn}
+                        onFailure={googleFail}   
+                        cookiePolicy={'single_host_origin'}
+                    />
+                    
                 </ButtonBase>
                 <div className="under-text">
                     <h5>Do you haven't got account?</h5>

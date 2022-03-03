@@ -52,11 +52,17 @@ const User = mongoose.model('users', mongoose.Schema({
     },
 }))
 
+// const VerifyUser = mongoose.model('VerifyUser', new mongoose.Schema({
+//     userId: String,
+//     uniqueString: String,
+//     createdAt: Date,
+//     expiresAt: Date
+// }))
 
 const userSignUpValidater = Joi.object({
     username: Joi.string().min(3).max(50).required(),
     email: Joi.string().email().max(50).required(),
-    password: Joi.string().min(6).max(50).required(),
+    password: Joi.string().min(6).max(40).required(),
     info: Joi.object({
         from: Joi.string().min(3).required(),
         city: Joi.string().min(3).required()
@@ -64,8 +70,8 @@ const userSignUpValidater = Joi.object({
 })
 
 const userSignInValidater = Joi.object({
-    password: Joi.string().min(6).max(20).required(),
-    email: Joi.string().email().max(20).required()
+    password: Joi.string().min(6).max(40).required(),
+    email: Joi.string().email().min(10).max(50).required()
 })
 
 const userUpdateValidater = Joi.object({
