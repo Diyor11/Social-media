@@ -23,7 +23,7 @@ const SignUp = () => {
     const countryRef = useRef(null)
     const cityRef  = useRef(null)
 
-    const clientId = '1016779241269-raj61dtgo42rl8pvhorke1tuknrts7g5.apps.googleusercontent.com'
+    const clientId = '1016779241269-7rpkmpimd4aofeib80ed2qgdf99p56ff.apps.googleusercontent.com'
 
     const navigate = useNavigate()
 
