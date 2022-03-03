@@ -51,8 +51,6 @@ function Onlines() {
     const {user} = useSelector(state => state.user)
     const dispatch = useDispatch()
 
-    console.log(onlines)
-
     useEffect(() => {
         socket.on('allUsers', (users) => {
             dispatch(getOnlines(users))

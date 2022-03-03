@@ -19,8 +19,6 @@ const FriendsSide = ({showSide, setShowSide}) => {
   const user = useSelector(state => state.user.user)
   const dispatch = useDispatch()
 
-  console.log(user, onlines)
-
   useEffect(() => dispatch(fetchAllUsers()), [dispatch])
 
   const navigate = useNavigate()

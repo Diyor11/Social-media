@@ -63,7 +63,6 @@ const Chatbox = ({setShowSide, setOnlines}) => {
 
   useEffect(() => {
     scroll.current?.scrollIntoView({behavior: 'smooth'})
-    console.log(scroll)
   }, [messages])
 
   return (
