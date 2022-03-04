@@ -13,8 +13,8 @@
 //         rejectUnauthorized: false,
 //     },
 //     auth: {
-//         user: 'diyorjsdeveloper@outlook.com',
-//         pass: 'diyor977382310'
+//         user: '**********@outlook.com',
+//         pass: '*********'
 //     }
 // }))
 
